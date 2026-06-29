@@ -1,0 +1,20 @@
+program uno;
+a:=1;
+b:=a+3;
+c:=(a+10)*b/2-3*(b+a*(c-1));
+while b <10 do
+  b:=b+1;
+end;
+
+if a+1 > b then
+  b:=b+5;
+  c:=c+1;
+else
+  a:=a-2; 
+  "numero";
+AND
+or
+not
+end;
+a:=a*2;
+end.
