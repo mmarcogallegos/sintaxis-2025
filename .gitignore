@@ -1,2 +1,3 @@
+# Para evitar que se suban al repositorio los archivos compilados de Pascal
 *.o
 *.ppu
