@@ -53,7 +53,7 @@ begin
      readkey;
 
 
-     InicializarTAS(TAS);
+     //InicializarTAS(TAS);
      readkey;
 
      close(fuente);

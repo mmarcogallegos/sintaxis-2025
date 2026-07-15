@@ -5,5 +5,5 @@ uses analizadorlexico, tablasimbolos, analizadorsintactico, prueba;
 begin
      analizarFuente();
 end.
-//asdasasdasddasasasdasdasdasdasdsasdadsasdasASASDASDASASD
+//asdasasdasddasasasdasdasdasdasdsasdadsasdasASASDASDASASsasdasdsasd
 //instantfpc proyectointegrador.lpr

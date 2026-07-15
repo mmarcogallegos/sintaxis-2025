@@ -1,23 +1,23 @@
 program UNO4;
 y:string;
 o:real;
-a := -1,0;
+a := -1;
 z := "franco";
-b:=a+3,00;
-c:=(a+10,0)*b/2,0-3,0*(b+a*(c-1,0));
+b:=a+3.00;
+c:=(a+10.0)*b/2.0-3.0*(b+a*(c-1.0));
 while b <= 1,0 do
-  b:=b+1,0;
+  b:=b+1.0;
 end;
 
-if a+1,0 >= b then
-  b:=b+5,0;
-  c:=c+1,0;
+if a+1.0 >= b then
+  b:=b+5.0;
+  c:=c+1.0;
 else
-  a:=a-2,0; 
+  a:=a-2; 
   "numero";
 AND
 or
 not
 end;
-a:=a*2,0;
+a:=a*2;
 end.

@@ -38,7 +38,7 @@ uses
 
 procedure GenerarTablaDeSimbolos(var tablaSimbolos:TablaDeSimbolos);  // carga en la tabla de simbolos las palabras reservadas indicadas en el trabajo practico
 begin
-     tablaSimbolos.cant := 16;
+     tablaSimbolos.cant := 17;
      tablaSimbolos.elem[1].componenteLexico := tProgram;
      tablaSimbolos.elem[1].lexema := 'PROGRAM';
      tablaSimbolos.elem[2].componenteLexico := tBegin;
@@ -71,6 +71,8 @@ begin
      tablaSimbolos.elem[15].lexema := 'REAL';
      tablaSimbolos.elem[16].componenteLexico := tCadena;
      tablaSimbolos.elem[16].lexema := 'STRING';
+     tablaSimbolos.elem[17].componenteLexico := tVar;
+     tablaSimbolos.elem[17].lexema := 'VAR';
 end;
           //buscarEnTS
 procedure InstalarEnTablaDeSimbolos(var tablaSimbolos:TablaDeSimbolos ; var componenteLexicoLeido:tipoSimboloGramatical ; var lexemaLeido:string);

@@ -9,7 +9,6 @@ uses tablasimbolos;
 procedure LeerCaracter(var Fuente:FileOfChar;var control:Longint; var caracter:char);
 Function EsIdentificador(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String):Boolean;
 Function EsConstanteReal(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String):Boolean;
-//Function EsConstanteEntera(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String):Boolean;
 Function EsConstanteCadena(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String):Boolean;
 Function EsSimboloEspecial(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String ; Var ComponenteLexico:TipoSimboloGramatical):Boolean;
 procedure ObtenerSiguienteComponenteLexico(var fuente:FileOfChar ; var control:longint ; var componenteLexico:TipoSimboloGramatical ; var lexema:string ; var TablaSimbolos:TablaDeSimbolos);
@@ -92,7 +91,7 @@ Const
      F=[4];
 Type
     Q=0..5;
-    Sigma=(Digito, Coma , Otro);
+    Sigma=(Digito, Punto , Otro);
     TipoDelta=Array[Q,Sigma] of Q;
 Var
    ControlAux:LongInt;
@@ -104,8 +103,8 @@ function caracterASimbolo(caracter:char):sigma;
 begin
      if (caracter in ['0'..'9']) then
           caracterASimbolo := Digito
-     else if (caracter = ',') then
-        caracterASimbolo := Coma
+     else if (caracter = '.') then
+        caracterASimbolo := Punto
      else
          caracterASimbolo := Otro;
 end;
@@ -113,10 +112,11 @@ end;
 Begin
      {Cargar la tabla de transiciones}
      Delta[0,Digito]:=1;
-     Delta[0,Coma]:=5;
+     Delta[0,Punto]:=5;
      Delta[0,Otro]:=5;
      Delta[1,Digito]:=1;
-     Delta[1,Coma]:=2;
+     Delta[1,Punto]:=2;
+     Delta[1,Otro]:=4;
      Delta[2,Digito]:=3;
      Delta[3,Digito]:=3;
      Delta[3,Otro]:=4;
