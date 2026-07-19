@@ -10,7 +10,7 @@ const
 
      MaxReal = 200;
 
-     MaxCadena = 1000;
+     MaxCadena = 255;
 
 type
 

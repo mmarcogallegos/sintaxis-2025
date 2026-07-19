@@ -1,0 +1,82 @@
+BNF
+
+<Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
+<DeclaracionVariables> ::= “var” <CuerpoVar> “end” “;” | “ε”
+<CuerpoVar> ::=  “identificador” “:” <TipoVar> ”;” |  “identificador” “:” <TipoVar> ”;” <CuerpoVar>
+<TipoVar> ::= “real” | “cadena”   
+<Cuerpo> ::= <Cuerpo> <Sentencia> ”;” | “ε”
+<Sentencia> ::=  <Asignacion> | <Lectura> | <Escritura> | <Condicional> | <Ciclica>
+<Asignacion> ::= “identificador” “operadorAsignacion” <ExpresionAritmetica> | “identificador” “operadorAsignacion” <OperacionConCadena>
+<ExpresionAritmetica> ::= “constanteReal” | “identificador” | <ExpresionAritmetica> “+” <ExpresionAritmetica> | <ExpresionAritmetica> “-” <ExpresionAritmetica> | <ExpresionAritmetica> “*” <ExpresionAritmetica> | <ExpresionAritmetica> “/” <ExpresionAritmetica> | <ExpresionAritmetica> “^” <ExpresionAritmetica>  | “raiz” <ExpresionAritmetica>  | “(“ <ExpresionAritmetica> ”)”
+<OperacionConCadena> ::= “constanteCadena” | “identificador” | <OperacionConCadena> “concatenacion” <OperacionConCadena> | “extraerSubcadena“ “(” <OperacionConCadena> ”,” <ExpresionAritmetica> ”,” <ExpresionAritmetica> “)” | “buscarSubcadena” “(” <OperacionConCadena> “,” <OperacionConCadena> “)” | “longitudCadena” “(” <OperacionConCadena> “)”
+<Ciclica> ::= “while” <Condicion> “do” <Cuerpo> “end”
+<Condicion> ::= <Comparacion> | <Condicion> “operadorLogico” <Condicion> 
+<Comparacion> ::= <ExpresionAritmetica> “operadorRelacional” <ExpresionAritmetica> | <OperacionConCadena> “operadorRelacional” <OperacionConCadena>
+<Condicional> ::= “if” <Condicion> “then” <Cuerpo> “end” | “if” <Condicion> “then” <Cuerpo> “else” <Cuerpo> “end”
+<Lectura> ::= “read” “(”  “constanteCadena” “,”identificador”)” | “read” “(“ “identificador” “)” 
+<Escritura> ::= “write” “(” <TipoEscritura> “)”
+<TipoEscritura> ::= <TipoEscritura> “constanteCadena” | <TipoEscritura> <ExpresionAritmetica> | <TipoEscritura> “identificador” | “ε”
+
+
+
+
+LL(1)
+
+<Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
+
+<DeclaracionVariables> ::= “var” <CuerpoVar> “end” “;” | “ε”
+
+<CuerpoVar> ::=  “identificador” “:” <TipoVar> ”;” <CuerpoVarII>
+
+<CuerpoVarII> ::= <CuerpoVar> | “ε”
+
+<TipoVar> ::= “real” | “cadena”   
+
+<Cuerpo> ::= <Sentencia> ”;” <Cuerpo>  | “ε”
+
+<Sentencia> ::=  <Asignacion> | <Lectura> | <Escritura> | <Condicional> | <Ciclica>
+
+<Asignacion> ::= “identificador” “operadorAsignacion” <Expresion>
+
+<Expresion> ::= <Termino> <ExpresionII>
+
+<ExpresionII> ::= “+” <Termino> <ExpresionII> | “-” <Termino> <ExpresionII> | “concatenacion” <Termino> <ExpresionII> | “ε” 
+
+<Termino> ::= <Factor> <TerminoII>
+
+<TerminoII> ::= “*” <Factor> <TerminoII> | “/” <Factor> <TerminoII> | “ε” 
+
+<Factor> ::= <MayorPrecedencia> <FactorII>
+
+<FactorII> ::= “^” <MayorPrecedencia> <FactorII> | “ε” 
+
+<MayorPrecedencia> ::= “constanteReal” | “constanteCadena” | “identificador” | “(” <Expresion> “)” | “raiz” “(” <Expresion> “)” | “extraerSubcadena” “(” <Expresion> “,” <Expresion> “,” <Expresion> “)” | ”buscarSubcadena” “(” <Expresion> “,” <Expresion> “)” | “longitudCadena” “(” <Expresion> “)” | “-” <MayorPrecedencia>
+
+<Ciclica> ::= “while” <Condicion> “do” <Cuerpo> “end”
+
+<Condicion> ::= <TerminoAnd> <CondicionII>
+
+<CondicionII> ::= “operadorLogicoOr” <TerminoAnd> <CondicionII> | “ε”
+
+<TerminoAnd> ::= <TerminoLogico> <TerminoAndII>
+
+<TerminoAndII> ::= “operadorLogicoAnd” <TerminoLogico> <TerminoAndII> | “ε”
+
+<TerminoLogico> ::= “operadorLogicoNot” <Comparacion> | <Comparacion>
+
+<Comparacion> ::= <Expresion> “operadorRelacional” <Expresion>
+
+<Condicional> ::= “if” <Condicion> “then” <Cuerpo> <CondicionalFin>
+
+<CondicionalFin>::= “end” | “else” <Cuerpo> “end”
+
+<Lectura> ::= “read” “(” <LecturaII> 
+
+<LecturaII> ::= “constanteCadena” “,” ”identificador”)” | “identificador” “)”
+
+<Escritura> ::= “write” “(” <TipoEscritura> “)”
+
+<TipoEscritura> ::=  <Expresion> <TipoEscrituraII> 
+
+<TipoEscrituraII> ::= “,” <Expresion> <TipoEscrituraII> | “ε”
+

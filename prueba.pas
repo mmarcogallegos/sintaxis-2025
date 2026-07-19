@@ -5,7 +5,9 @@ unit prueba;
 interface
 
 const
-ruta = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/programaPrueba.txt';
+ruta = '/home/marco/Desktop/sintaxis-2025/programaPrueba.txt';
+rutaCSV = '/home/marco/Desktop/sintaxis-2025/Gramatica/TAS.csv';
+rutaArbol = '/home/marco/Desktop/sintaxis-2025/arbol.txt';
 
 procedure analizarFuente();
 
@@ -13,7 +15,7 @@ procedure analizarFuente();
 
 implementation
 uses
-  analizadorlexico,tablasimbolos,crt,sysutils,TAS;
+  analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pilayarbol;
 
 procedure analizarFuente();
 var
@@ -24,40 +26,17 @@ var
    control:integer;
    TablaSimbolos:TablaDeSimbolos;
    TAS:tablaTas;
+   raiz:tipoArbolDerivacion;
+
 begin
-     GenerarTablaDeSimbolos(TablaSimbolos);
      assign(fuente,ruta);
      reset(fuente);
-     control:=0;
-
-     while (ComponenteLexico <> pesos) and (ComponenteLexico <> error) do
-           begin
-                obtenerSiguienteComponenteLexico(fuente , control , ComponenteLexico , Lexema , TablaSimbolos);
-                writeln('COMPONENTE LEXICO: ',ComponenteLexico, '  LEXEMA: ',Lexema);
-                //eadkey;
-           end;
 
 
-     readkey;
+     analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV);
 
-
-
-
-     for i:=1 to TablaSimbolos.cant do
-          begin
-               writeln(tablaSimbolos.elem[i].componenteLexico,'  ',tablaSimbolos.elem[i].lexema, '  ',i);
-          end;
-
-                    writeln(i);
-
-     readkey;
-
-
-     //InicializarTAS(TAS);
-     readkey;
-
+     EscribirArbol(rutaArbol,raiz);
      close(fuente);
-
 end;
 
 end.
