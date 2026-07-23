@@ -5,7 +5,7 @@ unit prueba;
 interface
 
 const
-ruta = '/home/marco/Desktop/sintaxis-2025/programaPrueba.txt';
+ruta = '/home/marco/Desktop/sintaxis-2025/Programas fuente/programaPrueba.txt';
 rutaCSV = '/home/marco/Desktop/sintaxis-2025/Gramatica/TAS.csv';
 rutaArbol = '/home/marco/Desktop/sintaxis-2025/arbol.txt';
 
@@ -19,24 +19,24 @@ uses
 
 procedure analizarFuente();
 var
-   i:integer;
-   fuente:fileOfChar;
-   ComponenteLexico:TipoSimboloGramatical;
-   Lexema:string;
-   control:integer;
-   TablaSimbolos:TablaDeSimbolos;
-   TAS:tablaTas;
-   raiz:tipoArbolDerivacion;
+    i:integer;
+    fuente:fileOfChar;
+    ComponenteLexico:TipoSimboloGramatical;
+    Lexema:string;
+    control:integer;
+    TablaSimbolos:TablaDeSimbolos;
+    TAS:tablaTas;
+    raiz:tipoArbolDerivacion;
 
 begin
-     assign(fuente,ruta);
-     reset(fuente);
+      assign(fuente,ruta);
+      reset(fuente);
 
 
-     analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV);
+      analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV);
 
-     EscribirArbol(rutaArbol,raiz);
-     close(fuente);
+      EscribirArbol(rutaArbol,raiz);
+      close(fuente);
 end;
 
 end.

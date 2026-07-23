@@ -1,291 +1,291 @@
- vPrograma: 
-   tProgram: program
-   tIdentificador: EjemploGramatica
-   tPuntoYComa: ;
-   vDeclaracionVariables: 
-     tVar: var
-     vCuerpoVar: 
-       tIdentificador: radio
-       tDosPuntos: :
-       vTipoVar: 
-         tReal: real
-       tPuntoYComa: ;
-       vCuerpoVarII: 
-         vCuerpoVar: 
-           tIdentificador: area
-           tDosPuntos: :
-           vTipoVar: 
-             tReal: real
-           tPuntoYComa: ;
-           vCuerpoVarII: 
-             vCuerpoVar: 
-               tIdentificador: nombre
-               tDosPuntos: :
-               vTipoVar: 
-                 tCadena: string
-               tPuntoYComa: ;
-               vCuerpoVarII: 
-                 vCuerpoVar: 
-                   tIdentificador: mensaje
-                   tDosPuntos: :
-                   vTipoVar: 
-                     tCadena: string
-                   tPuntoYComa: ;
-                   vCuerpoVarII: 
-     tEnd: end
-     tPuntoYComa: ;
-   tBegin: begin
-   vCuerpo: 
-     vSentencia: 
-       vLectura: 
-         tRead: read
-         tParentesisAbre: (
-         vLecturaII: 
-           tConstanteCadena: "Ingrese su nombre: "
-           tComa: ,
-           tIdentificador: nombre
-           tParentesisCierra: )
-     tPuntoYComa: ;
-     vCuerpo: 
-       vSentencia: 
-         vLectura: 
-           tRead: read
-           tParentesisAbre: (
-           vLecturaII: 
-             tConstanteCadena: "Ingrese el radio: "
-             tComa: ,
-             tIdentificador: radio
-             tParentesisCierra: )
-       tPuntoYComa: ;
-       vCuerpo: 
-         vSentencia: 
-           vCondicional: 
-             tIf: if
-             vCondicion: 
-               vTerminoAnd: 
-                 vTerminoLogico: 
-                   vComparacion: 
-                     vExpresion: 
-                       vTermino: 
-                         vFactor: 
-                           vMayorPrecedencia: 
-                             tIdentificador: radio
-                           vFactorII: 
-                         vTerminoII: 
-                       vExpresionII: 
-                     tOperadorRelacional: >
-                     vExpresion: 
-                       vTermino: 
-                         vFactor: 
-                           vMayorPrecedencia: 
-                             tConstanteReal: 0
-                           vFactorII: 
-                         vTerminoII: 
-                       vExpresionII: 
-                 vTerminoAndII: 
-                   tOperadorLogicoAND: and
-                   vTerminoLogico: 
-                     vComparacion: 
-                       vExpresion: 
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tLongitudCadena: length
-                               tParentesisAbre: (
-                               vExpresion: 
-                                 vTermino: 
-                                   vFactor: 
-                                     vMayorPrecedencia: 
-                                       tIdentificador: nombre
-                                     vFactorII: 
-                                   vTerminoII: 
-                                 vExpresionII: 
-                               tParentesisCierra: )
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                       tOperadorRelacional: >
-                       vExpresion: 
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tConstanteReal: 0
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                   vTerminoAndII: 
-               vCondicionII: 
-             tThen: then
-             vCuerpo: 
-               vSentencia: 
-                 vAsignacion: 
-                   tIdentificador: area
-                   tOperadorAsignacion: :=
-                   vExpresion: 
-                     vTermino: 
-                       vFactor: 
-                         vMayorPrecedencia: 
-                           tConstanteReal: 3.1415
-                         vFactorII: 
-                       vTerminoII: 
-                         tProducto: *
-                         vFactor: 
-                           vMayorPrecedencia: 
-                             tParentesisAbre: (
-                             vExpresion: 
-                               vTermino: 
-                                 vFactor: 
-                                   vMayorPrecedencia: 
-                                     tIdentificador: radio
-                                   vFactorII: 
-                                 vTerminoII: 
-                                   tProducto: *
-                                   vFactor: 
-                                     vMayorPrecedencia: 
-                                       tIdentificador: radio
-                                     vFactorII: 
-                                   vTerminoII: 
-                               vExpresionII: 
-                             tParentesisCierra: )
-                           vFactorII: 
-                         vTerminoII: 
-                     vExpresionII: 
-               tPuntoYComa: ;
-               vCuerpo: 
-                 vSentencia: 
-                   vAsignacion: 
-                     tIdentificador: mensaje
-                     tOperadorAsignacion: :=
-                     vExpresion: 
-                       vTermino: 
-                         vFactor: 
-                           vMayorPrecedencia: 
-                             tConstanteCadena: "Calculo exitoso para "
-                           vFactorII: 
-                         vTerminoII: 
-                       vExpresionII: 
-                         tConcatenacion: concat
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tIdentificador: nombre
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                 tPuntoYComa: ;
-                 vCuerpo: 
-                   vSentencia: 
-                     vEscritura: 
-                       tWrite: write
-                       tParentesisAbre: (
-                       vTipoEscritura: 
-                         vExpresion: 
-                           vTermino: 
-                             vFactor: 
-                               vMayorPrecedencia: 
-                                 tConstanteCadena: "Resultado: "
-                               vFactorII: 
-                             vTerminoII: 
-                           vExpresionII: 
-                         vTipoEscrituraII: 
-                           tComa: ,
-                           vExpresion: 
-                             vTermino: 
-                               vFactor: 
-                                 vMayorPrecedencia: 
-                                   tIdentificador: mensaje
-                                 vFactorII: 
-                               vTerminoII: 
-                             vExpresionII: 
-                           vTipoEscrituraII: 
-                             tComa: ,
-                             vExpresion: 
-                               vTermino: 
-                                 vFactor: 
-                                   vMayorPrecedencia: 
-                                     tIdentificador: area
-                                   vFactorII: 
-                                 vTerminoII: 
-                               vExpresionII: 
-                             vTipoEscrituraII: 
-                       tParentesisCierra: )
-                   tPuntoYComa: ;
-                   vCuerpo: 
-             vCondicionalFin: 
-               tElse: else
-               vCuerpo: 
-                 vSentencia: 
-                   vEscritura: 
-                     tWrite: write
-                     tParentesisAbre: (
-                     vTipoEscritura: 
-                       vExpresion: 
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tConstanteCadena: "Error: Valores invalidos"
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                       vTipoEscrituraII: 
-                     tParentesisCierra: )
-                 tPuntoYComa: ;
-                 vCuerpo: 
-               tEnd: end
-         tPuntoYComa: ;
-         vCuerpo: 
-           vSentencia: 
-             vCiclica: 
-               tWhile: while
-               vCondicion: 
-                 vTerminoAnd: 
-                   vTerminoLogico: 
-                     vComparacion: 
-                       vExpresion: 
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tIdentificador: radio
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                       tOperadorRelacional: <
-                       vExpresion: 
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tConstanteReal: 10
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                   vTerminoAndII: 
-                 vCondicionII: 
-               tDo: do
-               vCuerpo: 
-                 vSentencia: 
-                   vAsignacion: 
-                     tIdentificador: radio
-                     tOperadorAsignacion: :=
-                     vExpresion: 
-                       vTermino: 
-                         vFactor: 
-                           vMayorPrecedencia: 
-                             tIdentificador: radio
-                           vFactorII: 
-                         vTerminoII: 
-                       vExpresionII: 
-                         tMas: +
-                         vTermino: 
-                           vFactor: 
-                             vMayorPrecedencia: 
-                               tConstanteReal: 1
-                             vFactorII: 
-                           vTerminoII: 
-                         vExpresionII: 
-                 tPuntoYComa: ;
-                 vCuerpo: 
-               tEnd: end
-           tPuntoYComa: ;
-           vCuerpo: 
-   tEnd: end
-   tPunto: .
+vPrograma: 
+  tProgram: program
+  tIdentificador: EjemploGramatica
+  tPuntoYComa: ;
+  vDeclaracionVariables: 
+    tVar: var
+    vCuerpoVar: 
+      tIdentificador: radio
+      tDosPuntos: :
+      vTipoVar: 
+        tReal: real
+      tPuntoYComa: ;
+      vCuerpoVarII: 
+        vCuerpoVar: 
+          tIdentificador: area
+          tDosPuntos: :
+          vTipoVar: 
+            tReal: real
+          tPuntoYComa: ;
+          vCuerpoVarII: 
+            vCuerpoVar: 
+              tIdentificador: nombre
+              tDosPuntos: :
+              vTipoVar: 
+                tCadena: string
+              tPuntoYComa: ;
+              vCuerpoVarII: 
+                vCuerpoVar: 
+                  tIdentificador: mensaje
+                  tDosPuntos: :
+                  vTipoVar: 
+                    tCadena: string
+                  tPuntoYComa: ;
+                  vCuerpoVarII: 
+    tEnd: end
+    tPuntoYComa: ;
+  tBegin: begin
+  vCuerpo: 
+    vSentencia: 
+      vLectura: 
+        tRead: read
+        tParentesisAbre: (
+        vLecturaII: 
+          tConstanteCadena: "Ingrese su nombre: "
+          tComa: ,
+          tIdentificador: nombre
+          tParentesisCierra: )
+    tPuntoYComa: ;
+    vCuerpo: 
+      vSentencia: 
+        vLectura: 
+          tRead: read
+          tParentesisAbre: (
+          vLecturaII: 
+            tConstanteCadena: "Ingrese el radio: "
+            tComa: ,
+            tIdentificador: radio
+            tParentesisCierra: )
+      tPuntoYComa: ;
+      vCuerpo: 
+        vSentencia: 
+          vCondicional: 
+            tIf: if
+            vCondicion: 
+              vTerminoAnd: 
+                vTerminoLogico: 
+                  vComparacion: 
+                    vExpresion: 
+                      vTermino: 
+                        vFactor: 
+                          vMayorPrecedencia: 
+                            tIdentificador: radio
+                          vFactorII: 
+                        vTerminoII: 
+                      vExpresionII: 
+                    tOperadorRelacional: >
+                    vExpresion: 
+                      vTermino: 
+                        vFactor: 
+                          vMayorPrecedencia: 
+                            tConstanteReal: 0
+                          vFactorII: 
+                        vTerminoII: 
+                      vExpresionII: 
+                vTerminoAndII: 
+                  tOperadorLogicoAND: and
+                  vTerminoLogico: 
+                    vComparacion: 
+                      vExpresion: 
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tLongitudCadena: length
+                              tParentesisAbre: (
+                              vExpresion: 
+                                vTermino: 
+                                  vFactor: 
+                                    vMayorPrecedencia: 
+                                      tIdentificador: nombre
+                                    vFactorII: 
+                                  vTerminoII: 
+                                vExpresionII: 
+                              tParentesisCierra: )
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                      tOperadorRelacional: >
+                      vExpresion: 
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tConstanteReal: 0
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                  vTerminoAndII: 
+              vCondicionII: 
+            tThen: then
+            vCuerpo: 
+              vSentencia: 
+                vAsignacion: 
+                  tIdentificador: area
+                  tOperadorAsignacion: :=
+                  vExpresion: 
+                    vTermino: 
+                      vFactor: 
+                        vMayorPrecedencia: 
+                          tConstanteReal: 3.1415
+                        vFactorII: 
+                      vTerminoII: 
+                        tProducto: *
+                        vFactor: 
+                          vMayorPrecedencia: 
+                            tParentesisAbre: (
+                            vExpresion: 
+                              vTermino: 
+                                vFactor: 
+                                  vMayorPrecedencia: 
+                                    tIdentificador: radio
+                                  vFactorII: 
+                                vTerminoII: 
+                                  tProducto: *
+                                  vFactor: 
+                                    vMayorPrecedencia: 
+                                      tIdentificador: radio
+                                    vFactorII: 
+                                  vTerminoII: 
+                              vExpresionII: 
+                            tParentesisCierra: )
+                          vFactorII: 
+                        vTerminoII: 
+                    vExpresionII: 
+              tPuntoYComa: ;
+              vCuerpo: 
+                vSentencia: 
+                  vAsignacion: 
+                    tIdentificador: mensaje
+                    tOperadorAsignacion: :=
+                    vExpresion: 
+                      vTermino: 
+                        vFactor: 
+                          vMayorPrecedencia: 
+                            tConstanteCadena: "Calculo exitoso para "
+                          vFactorII: 
+                        vTerminoII: 
+                      vExpresionII: 
+                        tConcatenacion: concat
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tIdentificador: nombre
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                tPuntoYComa: ;
+                vCuerpo: 
+                  vSentencia: 
+                    vEscritura: 
+                      tWrite: write
+                      tParentesisAbre: (
+                      vTipoEscritura: 
+                        vExpresion: 
+                          vTermino: 
+                            vFactor: 
+                              vMayorPrecedencia: 
+                                tConstanteCadena: "Resultado: "
+                              vFactorII: 
+                            vTerminoII: 
+                          vExpresionII: 
+                        vTipoEscrituraII: 
+                          tComa: ,
+                          vExpresion: 
+                            vTermino: 
+                              vFactor: 
+                                vMayorPrecedencia: 
+                                  tIdentificador: mensaje
+                                vFactorII: 
+                              vTerminoII: 
+                            vExpresionII: 
+                          vTipoEscrituraII: 
+                            tComa: ,
+                            vExpresion: 
+                              vTermino: 
+                                vFactor: 
+                                  vMayorPrecedencia: 
+                                    tIdentificador: area
+                                  vFactorII: 
+                                vTerminoII: 
+                              vExpresionII: 
+                            vTipoEscrituraII: 
+                      tParentesisCierra: )
+                  tPuntoYComa: ;
+                  vCuerpo: 
+            vCondicionalFin: 
+              tElse: else
+              vCuerpo: 
+                vSentencia: 
+                  vEscritura: 
+                    tWrite: write
+                    tParentesisAbre: (
+                    vTipoEscritura: 
+                      vExpresion: 
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tConstanteCadena: "Error: Valores invalidos"
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                      vTipoEscrituraII: 
+                    tParentesisCierra: )
+                tPuntoYComa: ;
+                vCuerpo: 
+              tEnd: end
+        tPuntoYComa: ;
+        vCuerpo: 
+          vSentencia: 
+            vCiclica: 
+              tWhile: while
+              vCondicion: 
+                vTerminoAnd: 
+                  vTerminoLogico: 
+                    vComparacion: 
+                      vExpresion: 
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tIdentificador: radio
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                      tOperadorRelacional: <
+                      vExpresion: 
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tConstanteReal: 10
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                  vTerminoAndII: 
+                vCondicionII: 
+              tDo: do
+              vCuerpo: 
+                vSentencia: 
+                  vAsignacion: 
+                    tIdentificador: radio
+                    tOperadorAsignacion: :=
+                    vExpresion: 
+                      vTermino: 
+                        vFactor: 
+                          vMayorPrecedencia: 
+                            tIdentificador: radio
+                          vFactorII: 
+                        vTerminoII: 
+                      vExpresionII: 
+                        tMas: +
+                        vTermino: 
+                          vFactor: 
+                            vMayorPrecedencia: 
+                              tConstanteReal: 1
+                            vFactorII: 
+                          vTerminoII: 
+                        vExpresionII: 
+                tPuntoYComa: ;
+                vCuerpo: 
+              tEnd: end
+          tPuntoYComa: ;
+          vCuerpo: 
+  tEnd: end
+  tPunto: .

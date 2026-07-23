@@ -79,4 +79,3 @@ LL(1)
 <TipoEscritura> ::=  <Expresion> <TipoEscrituraII> 
 
 <TipoEscrituraII> ::= “,” <Expresion> <TipoEscrituraII> | “ε”
-
