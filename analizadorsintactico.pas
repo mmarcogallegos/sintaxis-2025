@@ -94,7 +94,7 @@ begin
 
             if compLexico <> error then
                   begin
-                        writeln('SINTAXIS VALIDA');
+                       // writeln('SINTAXIS VALIDA');
                   end
             else
                   begin

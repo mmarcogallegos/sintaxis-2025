@@ -28,4 +28,6 @@ begin
     radio := radio + 1;
   end;
 
+  write(radio);
+
 end.

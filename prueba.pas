@@ -15,7 +15,7 @@ procedure analizarFuente();
 
 implementation
 uses
-  analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pilayarbol;
+  analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pilayarbol,evaluador;
 
 procedure analizarFuente();
 var
@@ -27,15 +27,15 @@ var
     TablaSimbolos:TablaDeSimbolos;
     TAS:tablaTas;
     raiz:tipoArbolDerivacion;
-
+    estado:tipoEstado;
 begin
       assign(fuente,ruta);
       reset(fuente);
 
 
       analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV);
-
       EscribirArbol(rutaArbol,raiz);
+      EvalPrograma(raiz,estado);
       close(fuente);
 end;
 

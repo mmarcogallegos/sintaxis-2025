@@ -287,5 +287,22 @@ vPrograma:
               tEnd: end
           tPuntoYComa: ;
           vCuerpo: 
+            vSentencia: 
+              vEscritura: 
+                tWrite: write
+                tParentesisAbre: (
+                vTipoEscritura: 
+                  vExpresion: 
+                    vTermino: 
+                      vFactor: 
+                        vMayorPrecedencia: 
+                          tIdentificador: radio
+                        vFactorII: 
+                      vTerminoII: 
+                    vExpresionII: 
+                  vTipoEscrituraII: 
+                tParentesisCierra: )
+            tPuntoYComa: ;
+            vCuerpo: 
   tEnd: end
   tPunto: .
