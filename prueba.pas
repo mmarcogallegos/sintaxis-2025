@@ -4,20 +4,20 @@ unit prueba;
 
 interface
 
+uses
+  analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pila,arbol,evaluador;
+
 const
-ruta = '/home/marco/Desktop/sintaxis-2025/Programas fuente/programaPrueba.txt';
-rutaCSV = '/home/marco/Desktop/sintaxis-2025/Gramatica/TAS.csv';
-rutaArbol = '/home/marco/Desktop/sintaxis-2025/arbol.txt';
+ruta = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/esPalindromo.txt';
+rutaCSV = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Gramatica/TAS.csv';
+rutaArbol = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/arbol.txt';
 
-procedure analizarFuente();
-
-// Este procedimiento es solamente para probar el analizador lexico, luego el analizador sintactico va a llamar al analizador lexico y no se va a utilizar este procedimiento.
+procedure programaPrueba();
 
 implementation
-uses
-  analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pilayarbol,evaluador;
 
-procedure analizarFuente();
+
+procedure programaPrueba();
 var
     i:integer;
     fuente:fileOfChar;
@@ -28,14 +28,18 @@ var
     TAS:tablaTas;
     raiz:tipoArbolDerivacion;
     estado:tipoEstado;
+    aux:byte;
 begin
       assign(fuente,ruta);
       reset(fuente);
 
-
-      analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV);
+      analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV,aux);
       EscribirArbol(rutaArbol,raiz);
-      EvalPrograma(raiz,estado);
+
+      if aux = 1 then
+      begin
+            EvalPrograma(raiz,estado);
+      end;
       close(fuente);
 end;
 

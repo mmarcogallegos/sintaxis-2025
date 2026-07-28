@@ -1,9 +1,11 @@
 program proyectointegrador;
 
-uses analizadorlexico, tablasimbolos, analizadorsintactico, prueba;
+{$mode ObjFPC}{$H+}
+
+uses prueba;
 
 begin
-     analizarFuente();
+     programaPrueba();
 end.
-//asdasasdasddasasasdasdasdasdasdsasdadsasdsasasdsasdsssssssssssssssssssssssssassdasssssssssssssssssdasdasdasdasdASDasASASDASDASASsasdasdsasssasdsassssssssssssd
-//instantfpc proyectointegrador.lprssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+//asdasasdasddasasasdasdsasdassssdasdsasdadsasdsasasdsasdsssssssssssssssssssssssssassdasssssssssssssssssdasdasdasdasdASDasASASDASDASASsasdasdsasssasdsassssssssssssd
+//instantsfpc proysectoinstegrsdorsssssssssssssssssssssssssssssssss

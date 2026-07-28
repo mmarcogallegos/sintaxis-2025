@@ -5,11 +5,11 @@ unit evaluador;
 interface
 
 uses
-  Classes, SysUtils, math, tablaSimbolos, pilayarbol;
+  Classes, SysUtils, math, tablaSimbolos, pila, arbol;
 
 const
 
-      MaxVar = 200;  //define la cantidad maxima de variables que podra tener el programa
+      MaxVar = 200;  //define la cantidad maxima de variables que puede tener el programa
 
       MaxReal = 200;
 
@@ -27,7 +27,7 @@ type
 
       valorReal: real;  // si es de tipo real, contiene el valor
 
-      valorCadena: string[MaxCadena]; //si es de tipo cadena, contine la cadena de hasta 1000 caracteres
+      valorCadena: string[MaxCadena]; 
 
 
     end;
@@ -40,8 +40,8 @@ type
 
     end;
 
-    tipoValorDinamico = record
-      tipoDato:tipo;
+    tipoValorDinamico = record      //Creamos este registro para no tener que pasar como parametros una variable real y una variable cadena
+      tipoDato:tipo;                //Puede meterse este registro dentro de la definicion de estado(?
       valReal:real;
       valCadena:string[MaxCadena];
     end;
@@ -85,11 +85,7 @@ procedure EvalTipoEscritura(var arbol:tipoArbolDerivacion; var estado:tipoEstado
 procedure EvalTipoEscrituraII(var arbol:tipoArbolDerivacion; var estado:tipoEstado);
 
 
-
-
 implementation
-
-
 
 
 procedure InicializarEstado(var estado:tipoEstado);
@@ -107,7 +103,7 @@ begin
       end;
 end;
 
-procedure AsignarReal(var estado:tipoEstado; var lexema:string; resultadoReal:real);            //Primero se busca la variable en el estado, cuando se encuentra se le asigna su valor correspondiente
+procedure AsignarReal(var estado:tipoEstado; var lexema:string; resultadoReal:real);            //Busca la variable en el estado, una vez enconotrada le asigna el valor
 var
       i:integer;
 begin
@@ -120,7 +116,7 @@ begin
       end
 end;
 
-procedure AsignarCadena(var estado:tipoEstado; var lexema:string; resultadoCadena:string);
+procedure AsignarCadena(var estado:tipoEstado; var lexema:string; resultadoCadena:string);       //Busca la variable en el estado, una vez enconotrada le asigna el valor
 var
       i:integer;
 begin
@@ -135,7 +131,7 @@ end;
 
 function EliminarComillas(cadena:string):string;
 begin
-      if (length(cadena) >= 2) and (cadena[1]='"') and (cadena[length(cadena)] = '"') then
+      if (length(cadena) >= 2) and (cadena[1]='"') and (cadena[length(cadena)] = '"') then //length(cadena) >= 2 ya que la cadena vacia seria: ""
       begin
             EliminarComillas:=copy(cadena,2,length(cadena)-2);
       end
@@ -144,7 +140,6 @@ begin
             EliminarComillas:=cadena;
       end;
 end;
-
 
 //<Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
 
@@ -231,14 +226,51 @@ end;
 procedure EvalAsignacion(var arbol:tipoArbolDerivacion; var estado:tipoEstado);
 var
       nombreVariable:string;
-      resultadoSubArbol:tipoValorDinamico;
+      resultadoSubArbol,resultado:tipoValorDinamico;
+      variableEncontrada:boolean;
+      i:integer;
 begin
       if arbol^.hijos[1]^.simbolo = tIdentificador then
       begin
 
-            nombreVariable := arbol^.hijos[1]^.lexema;                        //"identificador" es el nombre de la variable
+            nombreVariable:= arbol^.hijos[1]^.lexema;  //"identificador" es el componente lexico correspondiente a la variable
+            variableEncontrada:=false;
+
+            for i:=1 to estado.cant do          //Buscamos la variable en el estado
+            begin
+                  if estado.elemento[i].lexemaID = nombreVariable then
+                  begin
+
+                        variableEncontrada:=true;
+                        resultado.tipoDato:=estado.elemento[i].tipoVariable;  //Primero obtenemos el tipo de dato de la variable
+
+                        if resultado.tipoDato = tipoReal then     
+                        begin
+                              resultado.valReal:=estado.elemento[i].valorReal;
+                        end
+                        else
+                        begin
+                              resultado.valCadena:=estado.elemento[i].valorCadena;
+                        end;
+                  end;
+            end;
+
+            if NOT variableEncontrada then
+            begin
+                  writeln();
+                  writeln('VARIABLE NO DECLARADA: ',nombreVariable);
+                  halt;
+            end;
+
             EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbol);         //Le pasamos el id a evaluar expresion ya que no podemos distinguir asignaciones de cadenas y reales 
             
+            if resultado.tipoDato <> resultadoSubArbol.tipoDato then
+            begin
+                  writeln();
+                  writeln('NO COINCIDEN LOS TIPOS DE ASIGNACION');
+                  halt;
+            end;
+
             case resultadoSubArbol.tipoDato of
                   tipoReal:
                         begin 
@@ -259,7 +291,7 @@ var
       resultadoSubArbol:tipoValorDinamico;
 begin
       EvalTermino(arbol^.hijos[1],estado,resultadoSubArbol);          
-      EvalExpresionII(arbol^.hijos[2],estado,resultadoSubArbol,resultado);  //resultado es la variable de salida, resultadoSubArbol es el parametro de entrada para calcular el resultado final
+      EvalExpresionII(arbol^.hijos[2],estado,resultadoSubArbol,resultado);
 end;
 
 //<ExpresionII> ::= “+” <Termino> <ExpresionII> | “-” <Termino> <ExpresionII> | “concatenacion” <Termino> <ExpresionII> | “ε” 
@@ -273,10 +305,10 @@ begin
             case arbol^.hijos[1]^.simbolo of
                   tMas: 
                         begin
-                              EvalTermino(arbol^.hijos[2],estado,resultadoSubArbolDos);            //Primero evalua el subarbol para saber que sigue luego de "+"
-                              resultadoSubArbol.valReal:=resultadoSubArbol.valReal + resultadoSubArbolDos.valReal; //Actualizamos el resultado del parametro, con el valor que nos ha devuelto EvalTermino
-                              EvalExpresionII(arbol^.hijos[3],estado,resultadoSubArbol,resultado);                //Ahora volvemos a llamar al procedimiento pero con el valor actualizaco
-                        end;                                                                    //Lo mismo sucede para las demas situaciones del case
+                              EvalTermino(arbol^.hijos[2],estado,resultadoSubArbolDos);                                 //Primero evalua el subarbol para saber que sigue luego de "+"
+                              resultadoSubArbol.valReal:=resultadoSubArbol.valReal + resultadoSubArbolDos.valReal;      //Actualizamos el resultado del parametro, con el valor que nos ha devuelto EvalTermino
+                              EvalExpresionII(arbol^.hijos[3],estado,resultadoSubArbol,resultado);                      //Ahora volvemos a llamar al procedimiento pero con el valor actualizaco
+                        end;                                                                                            //Lo mismo sucede para las demas situaciones del case
                   tMenos:  
                         begin
                               EvalTermino(arbol^.hijos[2],estado,resultadoSubArbolDos);
@@ -292,9 +324,11 @@ begin
             end;
       end
       else
+      begin
             resultado.valReal:=resultadoSubArbol.valReal;         //Si <ExpresionII> se hace epsilon, le asignamos al parametro los valores correspondientes    
             resultado.valCadena:=resultadoSubArbol.valCadena;
             resultado.tipoDato:=resultadoSubArbol.tipoDato;
+      end;
 end;
 
 //<Termino> ::= <Factor> <TerminoII>
@@ -336,10 +370,12 @@ begin
             end;
       end
       else
+      begin
             resultado.valReal := resultadoSubArbol.valReal;         
             resultado.valCadena := resultadoSubArbol.valCadena;
             resultado.tipoDato := resultadoSubArbol.tipoDato;    
-end;
+      end;
+end; 
 
 //<Factor> ::= <MayorPrecedencia> <FactorII>
 
@@ -376,20 +412,24 @@ begin
                   end;
       end
       else
+      begin
             resultado.valReal := resultadoSubArbol.valReal;         
             resultado.valCadena := resultadoSubArbol.valCadena;
             resultado.tipoDato := resultadoSubArbol.tipoDato;
+      end;
 end;
 
 //<MayorPrecedencia> ::= “constanteReal” | “constanteCadena” | “identificador” | “(” <Expresion> “)” | “raiz” “(” <Expresion> “)” | “extraerSubcadena” “(” <Expresion> “,” <Expresion> “,” <Expresion> “)” | ”buscarSubcadena” “(” <Expresion> “,” <Expresion> “)” | “longitudCadena” “(” <Expresion> “)” | “-” <MayorPrecedencia>
 
 procedure EvalMayorPrecedencia(var arbol:tipoArbolDerivacion; var estado:tipoEstado; var resultado:tipoValorDinamico);
 var   
-      aux,i:integer;
+      aux,i,posicion,longitud:integer;
       nombreVar:string;
-      resultadoSubArbol:tipoValorDinamico;
+      resultadoSubArbol, resultadoSubArbolDos, resultadoSubArbolTres:tipoValorDinamico;
+      variableEncontrada:boolean;
 begin
-      case arbol^.hijos[1]^.simbolo of 
+      
+      case arbol^.hijos[1]^.simbolo of
       tConstanteReal:
             begin
                   val(arbol^.hijos[1]^.lexema,resultado.valReal,aux);
@@ -400,16 +440,20 @@ begin
                   resultado.valCadena:=EliminarComillas(arbol^.hijos[1]^.lexema);
                   resultado.tipoDato:=tipoCadena;
             end;
-      tIdentificador:
+      tIdentificador:                                                               //Si es una variable, debemos buscarla en el estado
             begin
 
                   nombreVar:=arbol^.hijos[1]^.lexema;
+                  variableEncontrada:=false;
 
                   for i:=1 to estado.cant do
                   begin
                         if estado.elemento[i].lexemaId = nombreVar then       //Recorremos el estado buscando la variable para obtener su valor
                         begin
+
                               resultado.tipoDato:=estado.elemento[i].tipoVariable;
+                              variableEncontrada:=true;
+                              
                               if resultado.tipoDato = tipoReal then
                               begin
                                     resultado.valReal:=estado.elemento[i].valorReal;
@@ -421,16 +465,30 @@ begin
                         end;
                   end;
 
+                  if NOT variableEncontrada then
+                  begin
+                        writeln('VARIABLE NO DECLARADA: ',nombreVar);
+                        halt;
+                  end;
+
             end;
       tParentesisAbre:
             begin
 
-                  EvalExpresion(arbol^.hijos[2],estado,resultado);
+                  EvalExpresion(arbol^.hijos[2],estado,resultadoSubArbol);   
 
-                  {case resultadoSubArbolDos.tipoDato of
-                        tipoCadena: begin resultadoSubArbol.valCadena := resultadoSubArbolDos.valCadena end;
-                        tipoReal: begin resultadoSubArbol.valCadena := resultadoSubArbolDos.valCadena end;
-                  end;}
+                  case resultadoSubArbol.tipoDato of
+                        tipoCadena: 
+                              begin 
+                                    resultado.valCadena := resultadoSubArbol.valCadena;
+                                    resultado.tipoDato := tipoCadena;
+                              end;
+                        tipoReal: 
+                              begin 
+                                    resultado.valReal := resultadoSubArbol.valReal; 
+                                    resultado.tipoDato := tipoReal;
+                              end;
+                  end;
             end;
       tRaiz:
             begin
@@ -443,23 +501,107 @@ begin
                         resultado.tipoDato:=tipoReal;
                   end
                   else
+                        writeln();
                         writeln('ERROR. ARGUMENTO NEGATIVO');
+                        halt;
             end;
-      {tExtraerSubcadena:
+      tExtraerSubcadena:
             begin
-                  EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbolDos,resultadoUno);      //arreglar despues
-                  EvalExpresion(arbol^.hijos[5],estado,resultadoSubArbolTres,resultadoDos);       
-                  EvalExpresion(arbol^.hijos[7],estado,resultadoSubArbolCuatro,resultadoTres);
+
+                  EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbol);     
+                  EvalExpresion(arbol^.hijos[5],estado,resultadoSubArbolDos);       
+                  EvalExpresion(arbol^.hijos[7],estado,resultadoSubArbolTres);
+
+                  if (resultadoSubArbol.tipoDato = tipoCadena) AND (resultadoSubArbolDos.tipoDato = tipoReal) AND (resultadoSubArbolTres.tipoDato = tipoReal) then
+                  begin
+                        resultado.valCadena:=copy(resultadoSubArbol.valCadena,trunc(resultadoSubArbolDos.valReal),trunc(resultadoSubArbolTres.valReal));
+
+                        resultado.tipoDato:=tipoCadena;
+                  end
+                  else
+                  begin
+                        writeln();
+                        writeln('ERROR DE PARAMETROS');
+
+                        if NOT (resultadoSubArbol.tipoDato = tipoCadena) then
+                        begin
+                              writeln('SE ESPERABA UNA CADENA COMO PRIMER PARAMETRO, PERO SE HA ENCONTRADO: ', resultadoSubArbol.tipoDato);
+                        end;
+
+                        if NOT (resultadoSubArbolDos.tipoDato = tipoReal) then
+                        begin
+                              writeln('SE ESPERABA UN REAL COMO SEGUNDO PARAMETRO, PERO SE HA ENCONTRADO: ', resultadoSubArbolDos.tipoDato);
+                        end;
+
+                        if NOT (resultadoSubArbolTres.tipoDato = tipoReal) then
+                        begin
+                              writeln('SE ESPERABA UN REAL COMO TERCER PARAMETRO, PERO SE HA ENCONTRADO: ', resultadoSubArbolTres.tipoDato);
+                        end;
+
+                        writeln('ERROR DE PARAMETROS');
+                        halt;
+                  end; 
 
             end;
       tBuscarSubcadena:
             begin
 
+                  EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbol);     
+                  EvalExpresion(arbol^.hijos[5],estado,resultadoSubArbolDos); 
+
+                  if (resultadoSubArbol.tipoDato = tipoCadena) AND (resultadoSubArbolDos.tipoDato = tipoCadena) then
+                  begin
+                        posicion:=pos(resultadoSubArbol.valCadena,resultadoSubArbolDos.valCadena);   //Busca la primera en la segunda
+                        if posicion = 0 then
+                        begin
+                              resultado.valReal:=-1;
+                        end
+                        else
+                        begin
+                              resultado.valReal:=posicion;
+                        end;
+
+                        resultado.tipoDato:=tipoReal;
+
+                  end
+                  else
+                  begin
+                        writeln();
+                        if NOT(resultadoSubArbol.tipoDato = tipoCadena) then
+                        begin
+                              writeln('SE ESPERABA UNA CADENA COMO PRIMER PARAMETRO PERO SE HA ENCONTRADO: ',resultadoSubArbol.tipoDato);
+                        end;
+
+                        if NOT(resultadoSubArbolDos.tipoDato = tipoCadena) then
+                        begin
+                              writeln('SE ESPERABA UNA CADENA COMO SEGUNDO PARAMETRO PERO SE HA ENCONTRADO: ',resultadoSubArbolDos.tipoDato);
+                        end;
+                        halt;
+                  end;
+
             end;
       tLongitudCadena:
             begin
 
-            end;}
+                  EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbol);  
+
+                  if resultadoSubArbol.tipoDato = tipoCadena then
+                  begin
+                        longitud:=length(resultadoSubArbol.valCadena);
+
+                        resultado.tipoDato:=tipoReal;
+
+                        resultado.valReal:=longitud;
+
+                  end
+                  else
+                  begin
+                        writeln();
+                        writeln('SE ESPERABA UNA CADENA PERO SE HA ENCONTRADO: ',resultadoSubArbol.tipoDato);
+                        halt;
+                  end;
+
+            end;
       tMenos:
             begin
                   EvalMayorPrecedencia(arbol^.hijos[2],estado,resultadoSubArbol);       
@@ -467,13 +609,12 @@ begin
                   resultado.tipoDato:=tipoReal;
             end;
       end;
-
 end;
 
 //<Ciclica> ::= “while” <Condicion> “do” <Cuerpo> “end”
 
 procedure EvalCiclica(var arbol:tipoArbolDerivacion; var estado:tipoEstado);
-var
+var 
       cond:boolean;
 begin
 
@@ -481,8 +622,10 @@ begin
 
       while cond do
       begin
+
             EvalCuerpo(arbol^.hijos[4],estado);
-            EvalCondicion(arbol^.hijos[2],estado,cond);
+            
+            EvalCondicion(arbol^.hijos[2],estado,cond);     //Vuelve a evaluar la condicion para saber cuando tiene que salir del ciclo(?)
       end;
 end;
 
@@ -509,7 +652,9 @@ begin
             EvalCondicionII(arbol^.hijos[3],estado,cond,resultado);
       end
       else
+      begin
             resultado:=cond;
+      end;
 end;
 
 //<TerminoAnd> ::= <TerminoLogico> <TerminoAndII>
@@ -531,13 +676,13 @@ begin
       if arbol^.cant <> 0 then
       begin
             EvalTerminoLogico(arbol^.hijos[2],estado,resultadoSubArbol);
-
             cond:= cond AND resultadoSubArbol;
-
             EvalTerminoAndII(arbol^.hijos[3],estado,cond,resultado);
       end
       else
+      begin
             resultado:=cond;
+      end;
 end;
 
 //<TerminoLogico> ::= “operadorLogicoNot” <Comparacion> | <Comparacion>
@@ -562,6 +707,7 @@ var
       resultadoSubArbolUno:tipoValorDinamico;
       resultadoSubArbolDos:tipoValorDinamico;
 begin
+
       EvalExpresion(arbol^.hijos[1],estado,resultadoSubArbolUno);
 
       EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbolDos);
@@ -577,7 +723,7 @@ begin
             '>':begin resultado:= resultadoSubArbolUno.valReal > resultadoSubArbolDos.valReal end;
             end;
       end
-      else
+      else if (resultadoSubArbolUno.tipoDato = tipoCadena) AND (resultadoSubArbolDos.tipoDato = tipoCadena) then
       begin
             case arbol^.hijos[2]^.lexema of
             '=':begin resultado:= resultadoSubArbolUno.valCadena = resultadoSubArbolDos.valCadena end;
@@ -587,6 +733,12 @@ begin
             '<':begin resultado:= resultadoSubArbolUno.valCadena < resultadoSubArbolDos.valCadena end;
             '>':begin resultado:= resultadoSubArbolUno.valCadena > resultadoSubArbolDos.valCadena end;
             end;      
+      end
+      else
+      begin 
+            writeln();
+            writeln('ERROR: TIPOS DE COMPARACION');
+            halt;
       end;
 end;
 
@@ -600,11 +752,10 @@ begin
 
       if cond then
       begin
-            EvalCuerpo(arbol^.hijos[4],estado);
+            EvalCuerpo(arbol^.hijos[4],estado);       //No se evalua de nuevo la condicion por no ser un ciclo, a comparacion del ciclo while
       end;
 
       EvalCondicionalFin(arbol^.hijos[5],estado,cond);
-
 end;
 
 //<CondicionalFin>::= “end” | “else” <Cuerpo> “end”
@@ -613,7 +764,7 @@ procedure EvalCondicionalFin(var arbol:tipoArbolDerivacion; var estado:tipoEstad
 begin
       if arbol^.hijos[1]^.simbolo = tElse then
       begin
-            if NOT cond then
+            if NOT cond then                         
             begin
                   EvalCuerpo(arbol^.hijos[2],estado);
             end;
@@ -631,39 +782,70 @@ end;
 
 procedure EvalLecturaII(var arbol:tipoArbolDerivacion; var estado:tipoEstado);
 var
-      cadenaEntrada:string;
-      aux:integer;
+      cadenaEntrada, nombreVariable:string;
+      tipoVariableEncontrada:tipoValorDinamico;
+      aux,i:integer;
+      band:boolean;
       res:real;
 begin
+
+      band:=false;
+
+      // <Lectura> ::= “read” “(” “identificador” “)”
+      // <Lectura> ::= “read” “(” “constanteCadena” “,” ”identificador”)”
+
       if arbol^.hijos[1]^.simbolo = tIdentificador then
       begin
-            readln(cadenaEntrada);
-            val(cadenaEntrada,res,aux);
-
-            if aux <> 0 then
-            begin
-                  AsignarCadena(estado,arbol^.hijos[1]^.lexema,cadenaEntrada);
-            end
-            else
-            begin
-                  AsignarReal(estado,arbol^.hijos[1]^.lexema,res);
-            end;
+            nombreVariable:= arbol^.hijos[1]^.lexema;       //Si solo hay que leer una variable, guardamos su identificador para luego buscarla en el estado
       end
       else
       begin
             write(EliminarComillas(arbol^.hijos[1]^.lexema));
-            readln(cadenaEntrada);
-            val(cadenaEntrada,res,aux);
+            nombreVariable:=arbol^.hijos[3]^.lexema;        //Si hay un texto en pantalla, hacemos lo mismo pero buscando en otro hijo del arbol
+      end;
 
-            if aux <> 0 then
+      for i:=1 to estado.cant do                            //Buscamos en el estado la variable 
+      begin
+            if estado.elemento[i].lexemaId = nombreVariable then
             begin
-                  AsignarCadena(estado,arbol^.hijos[3]^.lexema,cadenaEntrada);
+                  tipoVariableEncontrada.tipoDato := estado.elemento[i].tipoVariable;     //Guardamos en una variable auxiliar el tipo de dato que es la variables encontrada
+                  band:=true;
+            end;
+      end;
+
+      if NOT band then              //Si el identificador no coincide con ninguna variable del estado, no ha sido declarada y devuelve error del programa
+      begin
+            writeln();
+            writeln('VARIABLE NO DECLARADA: ',nombreVariable);
+            halt;
+      end;
+
+      
+      readln(cadenaEntrada);  //cadenaEntrada es el valor que se le asignara a la variable
+                              //tipoVariableEncontrada podria ser definida como 'tipo'
+
+      if tipoVariableEncontrada.tipoDato = tipoReal then         //Si la cadena de entrada es un numero, debe coincidir con el tipo de declaracion de la variable     
+      begin
+
+            val(cadenaEntrada,res,aux);   //Convierte cadenaEntrada a real, si es real. Guarda el resultado en res
+            
+            if aux = 0 then
+            begin
+                  AsignarReal(estado,nombreVariable,res);   //Si la funcion val() no da error, actualiza el valor real en el estado
             end
             else
             begin
-                  AsignarReal(estado,arbol^.hijos[3]^.lexema,res);
+                  writeln();
+                  writeln('ERROR DE TIPOS: SE ESPERABA UN NUMERO PARA ',nombreVariable);
+                  halt;
             end;
+
+      end
+      else    //Si la cadena de entrada es una cadena, debe coincidir con el tipo de declaracion de la variable
+      begin
+            AsignarCadena(estado,nombreVariable,cadenaEntrada);
       end;
+
 end;
 
 //<Escritura> ::= “write” “(” <TipoEscritura> “)”
@@ -680,7 +862,13 @@ procedure EvalTipoEscritura(var arbol:tipoArbolDerivacion; var estado:tipoEstado
 var
       resultadoSubArbol:tipoValorDinamico;
 begin
-      EvalExpresion(arbol^.hijos[1],estado,resultadoSubArbol);
+
+      //<Escritura> ::= “write” “(” <TipoEscritura> “)”
+      //<Escritura> ::= “write” “(” <Expresion> <TipoEscrituraII> “)”
+      //<Escritura> ::= “write” “(” <Expresion> “,” <Expresion> <TipoEscrituraII> “)”
+      //<Escritura> ::= “write” “(” <Expresion> “,” <Expresion> “)”
+
+      EvalExpresion(arbol^.hijos[1],estado,resultadoSubArbol);    //Como la variable escritura siempre terminara escribiendo una expresiion (real o cadena), primero debemos evaluar la expresion
 
       if resultadoSubArbol.tipoDato = tipoCadena then
       begin
@@ -701,18 +889,26 @@ procedure EvalTipoEscrituraII(var arbol:tipoArbolDerivacion; var estado:tipoEsta
 var
       resultadoSubArbol:tipoValorDinamico;
 begin
+
+      //<Escritura> ::= “write” “(” <TipoEscritura> “)”
+      //<Escritura> ::= “write” “(” <Expresion> <TipoEscrituraII> “)”
+      //<Escritura> ::= “write” “(” <Expresion> “,” <Expresion> <TipoEscrituraII> “)”
+      //<Escritura> ::= “write” “(” <Expresion> “,” <Expresion> “)”
+
       if arbol^.cant <> 0 then
       begin
+
             EvalExpresion(arbol^.hijos[2],estado,resultadoSubArbol);
 
-            if resultadoSubArbol.tipoDato = tipoCadena then
+            if resultadoSubArbol.tipoDato = tipoCadena then //Como la variable TipoEscrituraII tambien debe imprimir algo en pantalla y en la misma linea, simplemente imprimimos el resultado de la expresion
             begin
-                  write(resultadoSubArbol.valCadena,' ');
+                  write(resultadoSubArbol.valCadena,' ');   
             end
             else
             begin
                   write(resultadoSubArbol.valReal:0:2,' ');
             end;
+
             EvalTipoEscrituraII(arbol^.hijos[3],estado);
       end;
 end;

@@ -4,7 +4,7 @@ unit TAS;
 
 interface
 
-uses crt , pilayarbol , sysutils , tablasimbolos , CsvDocument , csvreadwrite;
+uses crt, arbol, sysutils, CsvDocument, csvreadwrite, tablaSimbolos, pila;
 
 const
       Max = 8;
@@ -48,7 +48,7 @@ var
 begin
   CSVDoc := TCSVDocument.Create;
   try
-    CSVDoc.Delimiter := ',';                //Las comas separan las celdas del archivo .csv
+    CSVDoc.Delimiter := ',';        //Las comas separan las celdas del archivo .csv
     CSVDoc.LoadFromFile(AFileName);         
     result := CSVDoc.Cells[ACol, ARow];
   finally
@@ -59,7 +59,7 @@ end;
 procedure CargarTAS(var TAS:tablaTAS ; archivoTAS:string);
 var
   fila,col,k:integer;
-  arregloSimbolosAux:TStringArray;
+  arregloSimbolosAux:TStringArray; //Arreglo dinamico de cadenas
   i,j:TipoSimboloGramatical;
   celda:string;
 begin
@@ -67,24 +67,28 @@ begin
         begin
               for j:=tProgram to pesos do
                 begin
-                      fila := ord(i) - ord(vPrograma) + 1 ;  //ord devuelve la posicion del simbolo, como estan los terminales y las variables juntos hay que balancear los indices
+
+                      fila := ord(i) - ord(vPrograma) + 1 ;     //Ord devuelve la posicion del simbolo, como estan los terminales y las variables juntos hay que balancear los indices
                       col := ord(j) - ord(tProgram) + 1;
-                      celda:=ReadCSVCell(archivoTAS,fila,col); //Lee la celda del archivo csv
-                      if celda <> '' then   //Todas las celdas que tengan por lo menos un simbolo o la cadena vacia, NO empiezan con espacio en blanco
+                      celda:=ReadCSVCell(archivoTAS,fila,col);  //Guarda la celda leida del archivo csv
+
+                      if celda <> '' then                 //Ninguna celda que contenga informacion comienza con espacio en blanco
                         begin                          
-                              NEW(TAS[i,j]);
+                              NEW(TAS[i,j]);              //Esto no hace falta ya que se inicializa la tas previamente(?
                               if celda = 'EPS' then       //Si la celda del archivo .csv posee epsilon, solo se actualiza la cantidad en la TAS
                                 begin
                                       TAS[i,j]^.cant:=0;
                                 end
-                                    else                  //Sino, se divide cada celda en un arreglo, donde cada posicion del arreglo sera un simbolo
+                                    else                  //Sino, se divide cada celda en un arreglo, donde cada posicion del arreglo es un simbolo gramatical pero representado como cadena
                                         begin
-                                              arregloSimbolosAux := celda.Split([' ']);  // las producciones de las celdas tienen separados los sibolos por espacios en blanco
+                                              arregloSimbolosAux := celda.Split([' ']);  //Toma las palabras separadas por espacios en blanco y crea un arreglo 
+                                                                                         //Las producciones de las celdas tienen separados los simbolos por espacios en blanco
                                               for k:=0 to length(arregloSimbolosAux)-1 do   //Los arreglos del tipo TStringArray comienzan en cero
                                                   begin
-                                                        TAS[i,j]^.elem[k+1] := StringToSimbolo(arregloSimbolosAux[k]);  //StringToSimbolo lee cada simbolos de la celda e identifica si es un terminal o variable
+                                                        TAS[i,j]^.elem[k+1] := StringToSimbolo(arregloSimbolosAux[k]);  
+                                                        //StringToSimbolo lee cada simbolos de la celda e identifica si es un terminal o variable. Esto es necesario ya que la TAS guarda simbolos gramaticales, no cadenas
                                                   end;
-                                              TAS[i,j]^.cant:=k+1;        //Incrementa la cantidad de simbolos que contiene la celda
+                                              TAS[i,j]^.cant:=k+1;        //Incrementa la cantidad de simbolos que contiene la celda de la TAS en memoria
                                               arregloSimbolosAux := nil;  //Limpia la variable auxiliar
                                         end;                            
                         end;
@@ -92,7 +96,7 @@ begin
         end;
 end;
 
-Procedure ApilarCelda(var celda:tipoProduccion;var raiz:tipoArbolDerivacion;var pila:tipoPila);
+Procedure ApilarCelda(var celda:tipoProduccion;var raiz:tipoArbolDerivacion;var pila:tipoPila);  //Apila las producciones de la celda en orden inverso
 var
     i:integer;
     elementoPila:tipoElementoPila;

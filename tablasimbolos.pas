@@ -124,8 +124,11 @@ var
 begin
   // GetEnumValue busca el String exacto dentro de la definición del tipo enumerado
      Indice := GetEnumValue(TypeInfo(TipoSimboloGramatical), Trim(celda));
+
      if indice <> -1 then 
-          StringToSimbolo := TipoSimboloGramatical(indice) // Convierte el número al enumerado
+     begin
+          StringToSimbolo := TipoSimboloGramatical(indice) // Convierte el número en enumerado
+     end;
 end;
 
 end.

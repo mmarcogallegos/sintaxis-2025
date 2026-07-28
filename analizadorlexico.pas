@@ -147,9 +147,9 @@ end;
 Function EsConstanteCadena(Var Fuente:FileOfChar; Var Control:LongInt; Var Lexema:String):Boolean;
 Const
      q0=0;
-     F=[5];
+     F=[4];
 Type
-     Q=0..5;
+     Q=0..4;
      Sigma=(Otro, Comilla);
      TipoDelta=Array[Q,Sigma] of Q;
 Var
@@ -170,23 +170,22 @@ Begin
      {Cargar la tabla de transiciones}
      Delta[0,Otro]:=2;
      Delta[0,Comilla]:=1;
-     Delta[1,Otro]:=3;
-     Delta[3,Otro]:=3;
-     Delta[3,Comilla]:=4;
-     Delta[4,Otro]:=5;
+     Delta[1,Otro]:=1;
+     Delta[1,Comilla]:=3;
+     Delta[3,Otro]:=4;
 
      {Recorrer la cadena de entrada y cambiar estados}
      ControlAux:=Control;
      EstadoActual:=q0;
      Lexema:='';
 
-     While (EstadoActual <> 2) and (EstadoActual <> 5) do //no sea el estado muerto ni final
+     While (EstadoActual <> 2) and (EstadoActual <> 4) do //no sea el estado muerto ni final
                begin
                     LeerCaracter(Fuente, ControlAux, Car);
                     EstadoActual:=Delta[EstadoActual,caracterASimbolo(Car)];
                     ControlAux:=ControlAux+1;
 
-                    If EstadoActual<>5 then
+                    If EstadoActual<>4 then
                          Lexema:=Lexema+Car; //si el estado no es el final, va concatenando para formar la cadena final
                end;
 
@@ -218,9 +217,10 @@ begin
      ';': begin ComponenteLexico := tPuntoYComa; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      ',': begin ComponenteLexico := tComa; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      '.': begin ComponenteLexico := tPunto; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
+     '=': begin ComponenteLexico := tOperadorRelacional; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      ':':
      begin
-           inc(control); //Vuelve a incrementar el control para leer el siguiente caracter 
+          inc(control); //Vuelve a incrementar el control para leer el siguiente caracter 
           LeerCaracter(fuente,control,caracter);
           if caracter = '=' then
                begin
@@ -247,6 +247,13 @@ begin
                     Lexema := '<' + caracter;
                     EsSimboloEspecial := true;
                     inc(control);
+               end
+          else if Caracter = '>' then
+               begin
+                    ComponenteLexico := tOperadorRelacional;
+                    Lexema := '<>';
+                    EsSimboloEspecial := true;
+                    inc(control); 
                end
           else
                begin

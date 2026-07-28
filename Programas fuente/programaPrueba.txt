@@ -1,10 +1,11 @@
 program EjemploGramatica;
 
 var
-  radio: real;
-  area: real;
+  radio:real;
+  area:real;
   nombre: string; 
   mensaje: string;
+  a:string;
 end;
 
 begin

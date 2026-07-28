@@ -1,0 +1,43 @@
+program palindromo; 
+
+var 
+  texto:string;
+  longitud:real;
+  i:real;
+  j:real;
+  esPalindromo:real;
+  letraIzquierda:string;
+  letraDerecha:string;
+end;
+
+begin
+  read("Ingrese una palabra: ",texto);
+  longitud:=LENGTH(texto);
+  i:= 1 ;
+  j:= longitud ;
+  esPalindromo := 1 ;
+  
+  if texto <> "" then
+
+    while i <= j do
+        letraIzquierda := EXTRACT(texto,i,1);
+        letraDerecha := EXTRACT(texto,j,1);
+        
+        if letraIzquierda <> letraDerecha then
+        esPalindromo := 0;
+        end ;
+        
+        i:=i+1;
+        j:=j-1;
+    end;
+
+      if esPalindromo = 1 then
+    write("Es palindromo");
+  else
+    write("No es palindromo");
+  end;
+  else
+    write("Error. Cadena vacia");
+  end;
+  
+end.
