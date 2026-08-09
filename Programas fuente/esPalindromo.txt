@@ -11,6 +11,7 @@ var
 end;
 
 begin
+
   read("Ingrese una palabra: ",texto);
   longitud:=LENGTH(texto);
   i:= 1 ;
@@ -19,25 +20,35 @@ begin
   
   if texto <> "" then
 
-    while i <= j do
-        letraIzquierda := EXTRACT(texto,i,1);
-        letraDerecha := EXTRACT(texto,j,1);
-        
-        if letraIzquierda <> letraDerecha then
-        esPalindromo := 0;
-        end ;
-        
-        i:=i+1;
-        j:=j-1;
-    end;
+      while i <= j do
+
+          letraIzquierda := EXTRACT(texto,i,1);
+          letraDerecha := EXTRACT(texto,j,1);
+          
+          if letraIzquierda <> letraDerecha then
+            esPalindromo := 0;
+          end;
+          
+          i:=i+1;
+          j:=j-1;
+
+      end;
+
 
       if esPalindromo = 1 then
-    write("Es palindromo");
+
+        write("Es palindromo");
+
+      else
+
+        write("No es palindromo");
+
+      end;
+
   else
-    write("No es palindromo");
-  end;
-  else
+
     write("Error. Cadena vacia");
+  
   end;
   
 end.

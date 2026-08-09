@@ -1,0 +1,531 @@
+================================================================================
+          DOCUMENTACION DE REPOSITORIO Y LENGUAJE - PROYECTO INTEGRADOR
+                 Sintaxis y Semantica de los Lenguajes - Ano 2025
+================================================================================
+
+Este documento contiene la documentacion tecnica completa para el lenguaje de 
+programacion "Pascal-Lite" y su interprete desarrollado en Free Pascal. 
+
+--------------------------------------------------------------------------------
+INDICE DE SECCIONES:
+1. Nombre Elegido para el Lenguaje
+2. BNF: Definicion Formal de la Sintaxis
+3. Gramatica Modificada LL(1) y Tabla de Analisis Sintactico (TAS)
+4. Componentes Lexicos y Automatas Finitos Deterministas (DFA)
+5. Descripcion de la Semantica Asociada
+6. Documentacion del Programa: Que hace y como se usa
+7. Programas Escritos en el Lenguaje (Entregables 7, 8 y 9)
+8. Estructura de Modulos del Codigo Fuente
+9. Documentacion consultada
+10. Participantes del proyecto
+--------------------------------------------------------------------------------
+
+================================================================================
+1. NOMBRE ELEGIDO PARA EL LENGUAJE
+================================================================================
+El lenguaje ha sido llamado "Pascal-Lite". Se trata de un 
+lenguaje imperativo simplificado inspirado en Pascal, disenado con tipado fuerte, 
+soporta operaciones aritmeticas con numeros reales y operaciones con cadenas de
+caracteres.
+Como sentencias contiene: estructura de control ciclica y condicional, asignacion, 
+lectura y escritura.
+
+================================================================================
+2. BNF: DEFINICION FORMAL DE LA SINTAXIS
+================================================================================
+A continuacion se presenta la gramatica independiente del contexto (CFG) original 
+disenada en notacion BNF para especificar la sintaxis del lenguaje:
+
+<Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
+
+<DeclaracionVariables> ::= “var” <CuerpoVar> “end” “;” | “ε”
+
+<CuerpoVar> ::=  “identificador” “:” <TipoVar> ”;” |  “identificador” “:” <TipoVar> ”;” <CuerpoVar>
+
+<TipoVar> ::= “real” | “cadena”   
+
+<Cuerpo> ::= <Cuerpo> <Sentencia> ”;” | “ε”
+
+<Sentencia> ::=  <Asignacion> | <Lectura> | <Escritura> | <Condicional> | <Ciclica>
+
+<Asignacion> ::= “identificador” “operadorAsignacion” <ExpresionAritmetica> | “identificador” “operadorAsignacion” <OperacionConCadena>
+
+<ExpresionAritmetica> ::= “constanteReal” | “identificador” | <ExpresionAritmetica> “+” <ExpresionAritmetica> | <ExpresionAritmetica> “-” <ExpresionAritmetica> |
+                          <ExpresionAritmetica> “*” <ExpresionAritmetica> | <ExpresionAritmetica> “/” <ExpresionAritmetica> | <ExpresionAritmetica> “^” <ExpresionAritmetica>  | 
+                          “raiz” <ExpresionAritmetica>  | “(“ <ExpresionAritmetica> ”)”
+
+<OperacionConCadena> ::= “constanteCadena” | “identificador” | <OperacionConCadena> “concatenacion” <OperacionConCadena> | 
+                         “extraerSubcadena“ “(” <OperacionConCadena> ”,” <ExpresionAritmetica> ”,” <ExpresionAritmetica> “)” | 
+                         “buscarSubcadena” “(” <OperacionConCadena> “,” <OperacionConCadena> “)” | “longitudCadena” “(” <OperacionConCadena> “)”
+
+<Ciclica> ::= “while” <Condicion> “do” <Cuerpo> “end”
+
+<Condicion> ::= <Comparacion> | <Condicion> “operadorLogico” <Condicion> 
+
+<Comparacion> ::= <ExpresionAritmetica> “operadorRelacional” <ExpresionAritmetica> | <OperacionConCadena> “operadorRelacional” <OperacionConCadena>
+
+<Condicional> ::= “if” <Condicion> “then” <Cuerpo> “end” | “if” <Condicion> “then” <Cuerpo> “else” <Cuerpo> “end”
+
+<Lectura> ::= “read” “(”  “constanteCadena” “,”identificador”)” | “read” “(“ “identificador” “)” 
+
+<Escritura> ::= “write” “(” <TipoEscritura> “)”
+
+<TipoEscritura> ::= <TipoEscritura> “constanteCadena” | <TipoEscritura> <ExpresionAritmetica> | <TipoEscritura> “identificador” | “ε”
+
+================================================================================
+3. GRAMATICA MODIFICADA LL(1) Y TABLA DE ANALISIS SINTACTICO (TAS)
+================================================================================
+Gramatica LL(1) Modificada:
+
+<Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
+
+<DeclaracionVariables> ::= “var” <CuerpoVar> “end” “;” | “ε”
+
+<CuerpoVar> ::=  “identificador” “:” <TipoVar> ”;” <CuerpoVarII>
+
+<CuerpoVarII> ::= <CuerpoVar> | “ε”
+
+<TipoVar> ::= “real” | “cadena”   
+
+<Cuerpo> ::= <Sentencia> ”;” <Cuerpo>  | “ε”
+
+<Sentencia> ::=  <Asignacion> | <Lectura> | <Escritura> | <Condicional> | <Ciclica>
+
+<Asignacion> ::= “identificador” “operadorAsignacion” <Expresion>
+
+<Expresion> ::= <Termino> <ExpresionII>
+
+<ExpresionII> ::= “+” <Termino> <ExpresionII> | “-” <Termino> <ExpresionII> | “concatenacion” <Termino> <ExpresionII> | “ε” 
+
+<Termino> ::= <Factor> <TerminoII>
+
+<TerminoII> ::= “*” <Factor> <TerminoII> | “/” <Factor> <TerminoII> | “ε” 
+
+<Factor> ::= <MayorPrecedencia> <FactorII>
+
+<FactorII> ::= “^” <MayorPrecedencia> <FactorII> | “ε” 
+
+<MayorPrecedencia> ::= “constanteReal” | “constanteCadena” | “identificador” | “(” <Expresion> “)” | “raiz” “(” <Expresion> “)” | 
+                       “extraerSubcadena” “(” <Expresion> “,” <Expresion> “,” <Expresion> “)” | ”buscarSubcadena” “(” <Expresion> “,” <Expresion> “)” | 
+                       “longitudCadena” “(” <Expresion> “)” | “-” <MayorPrecedencia>
+
+<Ciclica> ::= “while” <Condicion> “do” <Cuerpo> “end”
+
+<Condicion> ::= <TerminoAnd> <CondicionII>
+
+<CondicionII> ::= “operadorLogicoOr” <TerminoAnd> <CondicionII> | “ε”
+
+<TerminoAnd> ::= <TerminoLogico> <TerminoAndII>
+
+<TerminoAndII> ::= “operadorLogicoAnd” <TerminoLogico> <TerminoAndII> | “ε”
+
+<TerminoLogico> ::= “operadorLogicoNot” <Comparacion> | <Comparacion>
+
+<Comparacion> ::= <Expresion> “operadorRelacional” <Expresion>
+
+<Condicional> ::= “if” <Condicion> “then” <Cuerpo> <CondicionalFin>
+
+<CondicionalFin>::= “end” | “else” <Cuerpo> “end”
+
+<Lectura> ::= “read” “(” <LecturaII> 
+
+<LecturaII> ::= “constanteCadena” “,” ”identificador”)” | “identificador” “)”
+
+<Escritura> ::= “write” “(” <TipoEscritura> “)”
+
+<TipoEscritura> ::=  <Expresion> <TipoEscrituraII> 
+
+<TipoEscrituraII> ::= “,” <Expresion> <TipoEscrituraII> | “ε”
+
+--------------------------------------------------------------------------------
+Tabla de Analisis Sintactico (TAS):
+--------------------------------------------------------------------------------
+La TAS se almacena externamente en 'Gramatica/TAS.csv'. Contiene la relacion 
+directa entre variables no terminales (filas) y componentes lexicos terminales 
+(columnas) que permite predecir que regla de produccion aplicar en la pila de 
+analisis.
+
+================================================================================
+4. COMPONENTES LEXICOS Y AUTOMATAS FINITOS DETERMINISTAS (DFA)
+================================================================================
+El Analizador reconoce los componentes lexicos complejos mediante Automatas Finitos 
+Deterministas (DFA). Estos automatas estan modelados en la carpeta 'Automatas' y se 
+implementan a nivel de codigo en 'analizadorlexico.pas'.
+
+--------------------------------------------------------------------------------
+Simbolos Especiales y Operadores Directos
+--------------------------------------------------------------------------------
+Los operadores y delimitadores de un solo caracter o de doble caracter (como 
+":=" o "<=") son reconocidos directamente mediante comparaciones de caracteres:
+- Delimitadores: '(', ')', ';', ',', '.'
+- Aritmeticos: '+', '-', '*', '/', '^'
+- Asignacion: ':=' (tOperadorAsignacion)
+- Relacionales: '=', '<', '>', '<=', '>=', '<>'
+- Palabras Reservadas (Normalizadas a mayusculas en la tabla de simbolos):
+  PROGRAM, BEGIN, END, VAR, REAL, STRING, IF, THEN, ELSE, WHILE, DO, READ, WRITE,
+  AND, OR, NOT, SQRT, CONCAT, EXTRACT, SEARCHSTR, LENGTH.
+
+
+================================================================================
+5. DESCRIPCION DE LA SEMANTICA ASOCIADA
+================================================================================
+El evaluador 'evaluador.pas' ejecuta de manera recursiva las reglas del 
+programa a partir de la estructura del arbol de derivacion generado por el 
+analizador sintactico. Sus reglas semanticas son:
+
+1. Estructura de Programas:
+   - Los programas estaran escritros en la forma que se presenta a continuacion,
+     donde la declaracion de varibales puede no tener variables declaradas.
+     El cuerpo del programa contendra las sentencias, puede no contener ninguna 
+     instruccion e igualmente sera valido. 
+
+    program identificador;
+
+    var
+      ...
+      ...
+      ...
+    end;
+
+    begin
+      ...
+      ...
+      ...
+    end.
+
+
+2. Declaracion y Ambito de Variables:
+   - Se requiere la declaracion previa de todas las variables en la seccion 'var'.
+   - Si se detecta una variable no declarada durante el analisis semantico o de 
+     asignacion, el programa arroja el mensaje "VARIABLE NO DECLARADA: [nombre]" 
+     y finaliza de inmediato ejecutando 'halt'.
+   - El estado del programa se guarda en 'tipoEstado' que almacena: el identificador, 
+     el tipo de variable (tipoReal o tipoCadena), y su valor correspondiente.
+
+3. Evaluacion de Expresiones Aritmeticas:
+   - Las constantes numericas reales se convierten de cadena a real ('val').
+   - Los operadores binarios '+', '-', '*', '/' operan sobre operandos reales.
+   - El operador '^' calcula la potencia.
+   - El operador unario (en <MayorPrecedencia>) '-' niega el valor de una expresion real.
+   - Funcion SQRT: Ejecuta la raiz cuadrada. Requiere un argumento real y que este 
+     sea mayor o igual a cero. Si es negativo, el programa arroja un error semantico 
+     ("ERROR. ARGUMENTO NEGATIVO") y finaliza. Si se le pasa una cadena, muestra 
+     "ERROR. DEBE INGRESAR UN REAL".
+
+4. Operaciones con Cadenas:
+   - Las cadenas literales cargadas por el analizador lexico son procesadas eliminando las 
+     comillas de los extremos "EliminarComillas".
+   - Operador CONCAT: Concatena dos expresiones de cadena.
+   - Funcion LENGTH: Retorna un valor real que representa la cantidad de caracteres.
+   - Funcion EXTRACT: Toma tres parametros: cadena a procesar, posicion de inicio 
+     (utiliza un numero real, truncado) y longitud a extraer (utiliza un numero real, truncado). 
+     Retorna la subcadena. Realiza comprobacion de tipos y aborta con "ERROR DE PARAMETROS" en caso de desajuste.
+   - Funcion SEARCHSTR: Toma dos cadenas. Busca la posicion de la primera 
+     dentro de la segunda usando la funcion 'pos' de Free Pascal. Si no la encuentra, 
+     retorna '-1'.
+
+5. Estructuras de Control y Operadores Logicos:
+   - Las condiciones de 'if' y 'while' se resuelven mediante comparaciones.
+   - Operadores logicos: 'AND', 'OR' y 'NOT' operan bajo algebra booleana convencional.
+     Donde el orden de precedencia es: 'NOT', 'AND' y 'OR' respectivamente.
+   - Operadores relacionales: Permiten comparar valores numericos y cadenas 
+     de caracteres de forma directa (alfabeticamente para cadenas).
+
+6. Entrada y Salida (E/S):
+   - 'read': Permite cargar valores en variables en tiempo de ejecucion. Puede ir 
+     acompanado de un mensaje, el cual debe ser una constante en cadena.
+   - 'write': Imprime en pantalla expresiones reales y/o de cadena.
+
+
+================================================================================
+6. DOCUMENTACION DEL PROGRAMA: QUE HACE Y COMO SE USA
+================================================================================
+
+--------------------------------------------------------------------------------
+Que hace el Interprete:
+--------------------------------------------------------------------------------
+1. Lee el codigo fuente en formato de texto.
+2. Ejecuta el Analizador Lexico, identificando cada componente lexico e 
+   instalando los identificadores nuevos en la Tabla de Símbolos, luego de haber
+   almacenado las palabras reservadas del lenguaje.
+3. El Analizador Sintactico extrae simbolos gramaticales y utiliza un algoritmo predictivo 
+   apoyado por una pila para validar que el programa corresponda a la gramatica LL(1).
+4. Mientras valida, construye un Arbol Sintactico de Derivacion de forma dinamica.
+5. Si no hay errores sintacticos, escribe una representacion jerarquica del arbol 
+   en el archivo especificado por la constante 'rutaArbol' ('arbol.txt').
+6. Si la variable de bandera sintactica es exitosa ('aux = 1'), llama al modulo 
+  'Evaluador', el cual ejecuta el programa de forma interactiva segun las reglas semanticas.
+
+--------------------------------------------------------------------------------
+Como se usa el interprete:
+--------------------------------------------------------------------------------
+1. Modificar rutas en 'prueba.pas':
+   Abre el archivo 'prueba.pas' y cambia el valor de las siguientes constantes 
+   segun la ruta absoluta de tu sistema:
+   * 'ruta': Ubicacion del archivo del codigo fuente a ejecutar (por ejemplo: 
+     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/cantidadVocales.txt').
+   * 'rutaCSV': Ubicacion del archivo CSV de la TAS (por ejemplo: 
+     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Gramatica/TAS.csv').
+   * 'rutaArbol': Destino de la exportacion del arbol de derivacion (por ejemplo: 
+     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/arbol.txt').
+
+2. Compilacion del Interprete y Ejecucion:
+   Utilizando la terminal o el compilador de Free Pascal (FPC):
+  
+   'instantfpc proyectoIntegrador.lpr'
+   
+   Esto generara el ejecutable `proyectoIntegrador` en el mismo directorio y lo 
+   ejecuta en el mimso momento. El programa comenzara con el analizador lexico y 
+   sintactico. Si es correcto, el programa comenzara su ejecucion interactiva imprimiendo 
+   y solicitando datos en la consola.
+
+================================================================================
+7. PROGRAMAS ESCRITOS EN EL LENGUAJE (Entregables 7, 8 y 9)
+================================================================================
+
+--------------------------------------------------------------------------------
+7. Programa Contador de Vocales (cantidadVocales.txt)
+--------------------------------------------------------------------------------
+Enunciado: Escriba un programa que lea una cadena y cuente cuántas vocales contiene. 
+El resultado debe mostrarse por pantalla. El programa debe recorrer la cadena carácter 
+por carácter.
+
+Codigo Fuente:
+
+program CantidadVocales;
+
+var
+    cadena: string;
+    cadenaAux: string;
+    acumulador: real;
+    posicion: real;
+end;
+
+begin
+
+    posicion := 1;
+    acumulador := 0;
+
+    read("ingrese cadena: ", cadena);
+    
+    while posicion <= LENGTH(cadena) do
+
+        cadenaAux := EXTRACT(cadena, posicion, 1);
+        
+        if cadenaAux = "a" then
+
+                 acumulador := acumulador + 1;
+
+           else if cadenaAux = "e" then
+
+                 acumulador := acumulador + 1;
+
+                 else if cadenaAux = "i" then
+
+                      acumulador := acumulador + 1;
+
+                      else if cadenaAux = "o" then
+
+                           acumulador := acumulador + 1;
+
+                           else if cadenaAux = "u" then
+
+                                acumulador := acumulador + 1;
+
+                           end;
+                           
+                      end;
+
+                 end;
+
+            end;
+           
+        end;
+
+        posicion := posicion + 1;
+
+    end;
+
+    write("Cantidad de vocales: ", acumulador);
+
+end.
+
+--------------------------------------------------------------------------------
+8. Verificador de Palindromos (esPalindromo.txt)
+--------------------------------------------------------------------------------
+Enunciado: Escriba un programa que lea una cadena y determine si es un palíndromo. 
+El resultado debe ser una cadena que diga "Es palíndromo" o "No es palíndromo". 
+
+Codigo Fuente:
+
+program palindromo; 
+
+var 
+  texto:string;
+  longitud:real;
+  i:real;
+  j:real;
+  esPalindromo:real;
+  letraIzquierda:string;
+  letraDerecha:string;
+end;
+
+begin
+
+  read("Ingrese una palabra: ",texto);
+  longitud:=LENGTH(texto);
+  i:= 1 ;
+  j:= longitud ;
+  esPalindromo := 1 ;
+  
+  if texto <> "" then
+
+      while i <= j do
+
+          letraIzquierda := EXTRACT(texto,i,1);
+          letraDerecha := EXTRACT(texto,j,1);
+          
+          if letraIzquierda <> letraDerecha then
+            esPalindromo := 0;
+          end;
+          
+          i:=i+1;
+          j:=j-1;
+
+      end;
+
+
+      if esPalindromo = 1 then
+
+        write("Es palindromo");
+
+      else
+
+        write("No es palindromo");
+
+      end;
+
+  else
+
+    write("Error. Cadena vacia");
+  
+  end;
+  
+end.
+
+--------------------------------------------------------------------------------
+9. Calculador de Factorial (nFactorial.txt - Adicional del Grupo)
+--------------------------------------------------------------------------------
+Enunciado: Escribir un programa que lea un numero por teclado y calcule su factorial.
+Si el numero es negativo, debe reportar un error. Si es 0 o positivo, realiza 
+el calculo iterativo acumulando los productos mediante un ciclo `while` y 
+muestra el resultado por consola.
+
+Codigo Fuente:
+
+program nFactorial;
+
+var
+    n:real;
+    i:real;
+    resultado:real;
+end;
+
+begin
+
+    i:=1;
+    resultado:=1;
+
+    read("Ingrese factorial a calcular: ",n);
+
+    if n > 0 then
+        
+        while i <= n do
+        
+            resultado:= resultado * i;
+            i:=i+1;
+        
+        end;
+
+    else if n = 0 then   
+
+        resultado:= resultado * 1;
+
+    end;
+
+end;
+
+    if n >= 0 then 
+
+        write(n,"! = ",resultado);
+
+    else
+
+        write("Error. Debe ingresar un entero no negativo");
+        
+    end;
+end.
+
+
+================================================================================
+8. ESTRUCTURA DE MODULOS DEL CODIGO FUENTE
+================================================================================
+El compilador e interprete esta compuesto por los siguientes archivos de codigo:
+
+1. proyectoIntegrador.lpr:
+   - Modulo principal del proyecto. Define el bloque principal del programa 
+     que llama a 'programaPrueba()' en la unit 'prueba'.
+
+2. prueba.pas:
+   - Configura las rutas locales del programa fuente, la TAS (.csv) y el archivo 
+     de salida del arbol.
+   - Ejecuta la llamada al Analizador Sintactico e interpreta el arbol resultante.
+
+3. analizadorlexico.pas:
+   - Implementa 'ObtenerSiguienteComponenteLexico()' que lee caracteres y reconoce 
+     componentes lexicos mediante tablas de transicion de DFAs.
+   - Filtra espacios y comentarios, y maneja las palabras reservadas del sistema.
+
+4. analizadorsintactico.pas:
+   - Implementa 'AnalizadorSintactico()'. Implementa el algoritmo predictivo LL(1) 
+     no recursivo con una pila explicta y construye el arbol jerarquico de derivacion.
+
+5. tablasimbolos.pas:
+   - Define el tipo enumerado 'TipoSimboloGramatical' para clasificar terminales y 
+     no terminales de la gramatica.
+   - Inicializa y gestiona el registro de la Tabla de Simbolos y palabras reservadas.
+
+6. TAS.pas:
+   - Carga la matriz bidimensional de la TAS leyendo dinamicamente las reglas 
+     del archivo CSV por medio del objeto 'TCSVDocument' provisto por Free Pascal.
+   - Implementa funciones auxiliares para apilar las celdas en orden inverso.
+
+7. arbol.pas:
+   - Contiene la definicion del arbol n-ario y los procedimientos para crear nodos, 
+     agregar hijos y exportar el arbol final con indentacion progresiva.
+
+8. pila.pas:
+   - Implementa la estructura clasica de datos Pila (Apilar, Desapilar, CrearPila) 
+     utilizada por el motor del analizador sintactico predictivo.
+
+9. evaluador.pas:
+   - Implementa el interprete del lenguaje. Recorre recursivamente el arbol de 
+     derivacion ejecutando cada sentencia segun las reglas semanticas, gestiona 
+     el estado de las variables e interactua con la consola para E/S.
+
+================================================================================
+9. DOCUMENTACION CONSULTADA
+================================================================================
+
+https://wiki.freepascal.org/CSV
+https://wiki.freepascal.org/CsvDocument
+
+================================================================================
+10. PARTICIPANTES DEL PROYECTO
+================================================================================
+
+- GALLEGOS MARCO
+- MORENO FRANCO
+- IRIBARREN GONZALO JAVIER
+
+================================================================================

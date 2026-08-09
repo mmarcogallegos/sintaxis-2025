@@ -214,6 +214,7 @@ begin
      '-': begin ComponenteLexico := tMenos; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      '*': begin ComponenteLexico := tProducto; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      '/': begin ComponenteLexico := tDivision; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
+     '^': begin ComponenteLexico := tPotencia; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      ';': begin ComponenteLexico := tPuntoYComa; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      ',': begin ComponenteLexico := tComa; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;
      '.': begin ComponenteLexico := tPunto; Lexema := Caracter; inc(Control); EsSimboloEspecial := true; end;

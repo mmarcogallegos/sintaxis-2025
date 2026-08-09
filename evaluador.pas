@@ -274,7 +274,7 @@ begin
             case resultadoSubArbol.tipoDato of
                   tipoReal:
                         begin 
-                              AsignarReal(estado,nombreVariable,resultadoSubArbol.valReal); 
+                              AsignarReal(estado,nombreVariable,resultadoSubArbol.valReal);     //Solo actualizamos los valores de las variables en la asignacion
                         end;
                   tipoCadena:    
                         begin
@@ -358,14 +358,19 @@ begin
                         end;
                   tDivision:
                         begin
+
                               EvalFactor(arbol^.hijos[2],estado,resultadoSubArbolDos);
+
                               if resultadoSubArbolDos.valReal <> 0 then
                               begin
                                     resultadoSubArbol.valReal:=resultadoSubArbol.valReal / resultadoSubArbolDos.valReal;
                                     EvalTerminoII(arbol^.hijos[3],estado,resultadoSubArbol,resultado);
                               end
                               else
+                              begin
                                     writeln('ERROR. DIVISION POR CERO');
+                                    halt;
+                              end;
                         end;
             end;
       end
@@ -393,29 +398,59 @@ procedure EvalFactorII(var arbol:tipoArbolDerivacion; var estado:tipoEstado; var
 var
       resultadoSubArbolDos:tipoValorDinamico;
 begin
+
+
+      //<Factor> ::= <MayorPrecedencia> <FactorII>
+      //<Factor> ::= <MayorPrecedencia> “^” <MayorPrecedencia> <FactorII>
+      //<Factor> ::= <MayorPrecedencia> “^” <MayorPrecedencia> 
+
       if arbol^.cant <> 0 then
       begin
-            if arbol^.hijos[1]^.simbolo = tPotencia then
+            if (arbol^.hijos[1]^.simbolo = tPotencia) AND (resultadoSubArbol.tipoDato = tipoReal) then
                   begin
 
                         EvalMayorPrecedencia(arbol^.hijos[2],estado,resultadoSubArbolDos);
-
-                        if (resultadoSubArbolDos.valReal <> 0) and (resultadoSubArbol.valReal <> 0) then
+                        
+                        if resultadoSubArbolDos.tipoDato = tipoReal then
                         begin
+                              if (resultadoSubArbolDos.valReal <> 0) AND (resultadoSubArbol.valReal <> 0) then
+                              begin
 
-                              resultadoSubArbol.valReal:= power(resultadoSubArbol.valReal,resultadoSubArbolDos.valReal);
-                              EvalFactorII(arbol^.hijos[3],estado,resultadoSubArbol,resultado);
+                                    resultadoSubArbol.valReal:= power(resultadoSubArbol.valReal,resultadoSubArbolDos.valReal);
+                                    EvalFactorII(arbol^.hijos[3],estado,resultadoSubArbol,resultado);
 
+                              end
+                              else if (resultadoSubArbolDos.valReal = 0) AND (resultadoSubArbol.valReal <> 0) then
+                              begin
+                                    resultado.valReal:=1;
+                              end
+                              else if (resultadoSubArbolDos.valReal <> 0) AND (resultadoSubArbol.valReal = 0) then
+                              begin
+                                    resultado.valReal:=0;
+                              end
+                              else
+                              begin
+                                    writeln('ERROR. INDETERMINACION');
+                                    halt;
+                              end;
                         end
                         else
-                              writeln('ERROR. CERO A LA CERO');
+                        begin
+                              writeln('ERROR. INGRESE UN NUMERO');
+                              halt;
+                        end;
+                  end
+                  else if (resultadoSubArbol.tipoDato = tipoCadena) then
+                  begin
+                        writeln('ERROR. INGRESE UN NUMERO');
+                        halt;
                   end;
       end
       else
       begin
             resultado.valReal := resultadoSubArbol.valReal;         
             resultado.valCadena := resultadoSubArbol.valCadena;
-            resultado.tipoDato := resultadoSubArbol.tipoDato;
+            resultado.tipoDato := resultadoSubArbol.tipoDato;    
       end;
 end;
 
@@ -495,15 +530,27 @@ begin
 
                   EvalExpresion(arbol^.hijos[3],estado,resultadoSubArbol);
 
-                  if resultadoSubArbol.valReal >= 0 then
+                  if resultadoSubArbol.tipoDato = tipoReal then
                   begin
-                        resultado.valReal:=power(resultadoSubArbol.valReal,(1/2));
-                        resultado.tipoDato:=tipoReal;
+
+                        if resultadoSubArbol.valReal >= 0 then
+                        begin
+                              resultado.valReal:=sqrt(resultadoSubArbol.valReal);
+                              resultado.tipoDato:=tipoReal;
+                        end
+                        else
+                        begin;
+                              writeln();
+                              writeln('ERROR. ARGUMENTO NEGATIVO');
+                              halt;
+                        end;
                   end
                   else
+                  begin 
                         writeln();
-                        writeln('ERROR. ARGUMENTO NEGATIVO');
-                        halt;
+                        writeln('ERROR. DEBE INGRESAR UN REAL');
+                        halt;    
+                  end;
             end;
       tExtraerSubcadena:
             begin

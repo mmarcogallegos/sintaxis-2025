@@ -10,7 +10,7 @@ uses
 const
 ruta = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/esPalindromo.txt';
 rutaCSV = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Gramatica/TAS.csv';
-rutaArbol = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/arbol.txt';
+rutaArbol = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/arbol.txt';
 
 procedure programaPrueba();
 
@@ -40,6 +40,7 @@ begin
       begin
             EvalPrograma(raiz,estado);
       end;
+
       close(fuente);
 end;
 

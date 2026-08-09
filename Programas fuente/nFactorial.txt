@@ -1,0 +1,42 @@
+program nFactorial;
+
+var
+    n:real;
+    i:real;
+    resultado:real;
+end;
+
+begin
+
+    i:=1;
+    resultado:=1;
+
+    read("Ingrese factorial a calcular: ",n);
+
+    if n > 0 then
+        
+        while i <= n do
+        
+            resultado:= resultado * i;
+            i:=i+1;
+        
+        end;
+
+    else if n = 0 then   
+
+        resultado:= resultado * 1;
+
+    end;
+
+end;
+
+    if n >= 0 then 
+
+        write(n,"! = ",resultado);
+
+    else
+
+        write("Error. Debe ingresar un entero no negativo");
+        
+    end;
+end.

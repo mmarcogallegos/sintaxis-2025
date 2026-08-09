@@ -1,4 +1,4 @@
-program EjemploGramatica;
+program programaPrueba;
 
 var
   radio:real;
@@ -14,6 +14,7 @@ begin
   read("Ingrese el radio: ", radio);
 
   if radio > 0 and length(nombre) > 0 then 
+   
     area := 3.1415 * (radio * radio);
     
     mensaje := "Calculo exitoso para " concat nombre;
@@ -23,6 +24,7 @@ begin
   else
   
     write("Error: Valores invalidos");
+  
   end;  
 
   while radio < 10 do

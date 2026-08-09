@@ -3,22 +3,11 @@ program CantidadVocales;
 var
     cadena: string;
     cadenaAux: string;
-    vocal:string;
-    vocal2:string;
-    vocal3:string;
-    vocal4:string;
-    vocal5:string;
     acumulador: real;
     posicion: real;
 end;
 
 begin
-
-    vocal:="a";
-    vocal2:="e";
-    vocal3:="i";
-    vocal4:="o";
-    vocal5:="u";
 
     posicion := 1;
     acumulador := 0;
@@ -29,26 +18,35 @@ begin
 
         cadenaAux := EXTRACT(cadena, posicion, 1);
         
-        if cadenaAux = vocal then
-                acumulador := acumulador + 1;
-        end;
+        if cadenaAux = "a" then
 
-        if cadenaAux = vocal2 then
                 acumulador := acumulador + 1;
-        end;
-                
-        if cadenaAux = vocal3 then
-                acumulador := acumulador + 1;
-        end;
 
-        if cadenaAux = vocal4 then
-                acumulador := acumulador + 1;
-        end;
+           else if cadenaAux = "e" then
 
-        if cadenaAux = vocal5 then
                 acumulador := acumulador + 1;
-        end;
 
+                else if cadenaAux = "i" then
+
+                     acumulador := acumulador + 1;
+
+                     else if cadenaAux = "o" then
+
+                          acumulador := acumulador + 1;
+
+                          else if cadenaAux = "u" then
+
+                               acumulador := acumulador + 1;
+
+                          end;
+                          
+                     end;
+
+                end;
+
+           end;
+           
+        end;
 
         posicion := posicion + 1;
 

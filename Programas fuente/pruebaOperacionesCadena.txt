@@ -1,0 +1,28 @@
+program pruebaOperacionesCadena;
+
+var
+    raiz:string;
+    buscada:string;
+    resultado:real;
+end;
+
+begin
+
+    read("Ingrese cadena base",raiz);
+
+    read("Ingrese subcadena a buscar: ",buscada);
+
+    resultado:=SEARCHSTR(buscada,raiz);
+
+    if resultado <> -1 then
+
+        write("Posicion: ", resultado);
+
+    else
+
+        write("No se ha encontrado la subcadena: ", buscada);
+
+    end;
+
+
+end.
