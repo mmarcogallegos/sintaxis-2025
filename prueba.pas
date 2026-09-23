@@ -8,16 +8,17 @@ uses
   analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pila,arbol,evaluador;
 
 const
-ruta = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/esPalindromo.txt';
-rutaCSV = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Gramatica/TAS.csv';
-rutaArbol = '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/arbol.txt';
+ruta = '/home/marco/Desktop/sintaxis-2025/Programas fuente/esPalindromo.txt';
+rutaCSV = '/home/marco/Desktop/sintaxis-2025/Gramatica/TAS.csv';
+rutaArbol = '/home/marco/Desktop/sintaxis-2025/Programas fuente/arbol.txt';
 
-procedure programaPrueba();
+
+procedure programaPrueba(nombreFuente:string);
 
 implementation
 
 
-procedure programaPrueba();
+procedure programaPrueba(nombreFuente:string);
 var
     i:integer;
     fuente:fileOfChar;
@@ -30,7 +31,7 @@ var
     estado:tipoEstado;
     aux:byte;
 begin
-      assign(fuente,ruta);
+      assign(fuente,nombreFuente);
       reset(fuente);
 
       analizadorsintactico.AnalizadorSintactico(fuente,raiz,rutaCSV,aux);

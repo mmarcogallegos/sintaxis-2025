@@ -4,8 +4,7 @@ program proyectointegrador;
 
 uses prueba;
 
+
 begin
-     programaPrueba();
+     programaPrueba(paramstr(1));
 end.
-//asdasasdasddasasasdasdsasdasssssssssssssdasdsasdasssssdsasdsasasdsasdsssssssssssssssssssssssssassdasssssssssssssssssdasdasdasdasdASDasASASDASDASASsasdasdsasssasdsassssssssssssd
-//instantsfpc proysssssssectoinstegrsdorsssssssssssssssssssssssssssssssssssssssssss

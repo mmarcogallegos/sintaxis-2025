@@ -519,6 +519,9 @@ El compilador e interprete esta compuesto por los siguientes archivos de codigo:
 
 https://wiki.freepascal.org/CSV
 https://wiki.freepascal.org/CsvDocument
+https://www.freepascal.org/docs-html/rtl/typinfo/getenumvalue.html
+https://www.freepascal.org/docs-html/rtl/typinfo/getenumname.html
+https://www.freepascal.org/docs-html/rtl/sysutils/trim.html
 
 ================================================================================
 10. PARTICIPANTES DEL PROYECTO

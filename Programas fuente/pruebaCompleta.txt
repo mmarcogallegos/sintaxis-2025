@@ -1,0 +1,73 @@
+program pruebaCompleta;
+
+var
+    varUno:string;
+    varDos:real;
+    varTres:real;
+    varCuatro:string;
+    numReal:real;
+    varPruebaDos:string;
+    varPrueba:real;
+end;
+
+begin
+
+    varUno:=" ";
+    varDos:=0;
+    varTres:=0;
+    varCuatro:="123";
+
+    read("Ingrese un numero: ",varUno);
+
+    write("Ingrese otro numero");
+    read(varTres);
+    write(varUno,varTres);
+    write("Probando ",varDos);
+
+    IF SEARCHSTR("3",varCuatro) <> -1 THEN
+        write("SE HA ENCONTRADO LA SUBCADENA");
+        varUno:= "prueba" CONCAT " " CONCAT EXTRACT(varCuatro,1,2);
+        write(varUno); 
+        write(LENGTH(varUno));
+    END;
+
+    varDos:=1;
+    numReal:= (12 + (-(varDos)) * (sqrt(9) + 2^2) ) + (12/2) + LENGTH(varUno);
+    write(numReal);
+    numReal:= 5 * 4 + 2 +  3 - 1 /2 + SQRT(3+6) * 2^-3;
+    write(numReal);
+    numReal:= 3 * 4 / 2;
+    write(numReal); 
+
+    read("Leer variable de prueba ",varPrueba);
+
+    IF NOT varPrueba > 4 THEN
+    
+        write(varPrueba,"  > 4 ?");
+
+        ELSE IF 3 > 0 THEN
+
+            write("HA LLEGADO A ELSE");
+
+        END;
+    
+    END;
+
+    read("INGRESE 'S' PARA EJECUTAR EL CICLO ", varPruebaDos);
+
+    WHILE varPruebaDos = "S" AND NOT 3 > 4 AND 10 > 5 DO 
+
+        read("HA ENTRADO AL CICLO. 'S' PARA CONTINUAR ", varPruebaDos);
+
+    END;
+
+    read("PRUEBA DE PRECEDENCIA DE OR. INGRESE 'S' PARA EJECUTAR EL CICLO ",varPruebaDos);
+
+    WHILE 3 > 4 AND 10 < 5 OR varPruebaDos = "S" DO 
+
+        read("HA ENTRADO AL CICLO. 'S' PARA CONTINUAR ", varPruebaDos);
+
+    END;
+
+
+end.

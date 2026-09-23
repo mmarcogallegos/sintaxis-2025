@@ -86,7 +86,7 @@ begin
                                               for k:=0 to length(arregloSimbolosAux)-1 do   //Los arreglos del tipo TStringArray comienzan en cero
                                                   begin
                                                         TAS[i,j]^.elem[k+1] := StringToSimbolo(arregloSimbolosAux[k]);  
-                                                        //StringToSimbolo lee cada simbolos de la celda e identifica si es un terminal o variable. Esto es necesario ya que la TAS guarda simbolos gramaticales, no cadenas
+                                                        //StringToSimbolo lee cada simbolos de la celda e identifica si es un terminal o variable. Esto es necesario ya que la TAS guarda simbolos gramaticales, no cadenas. Es el "filtro" que convierte la cadena del archivo .csv a simbolo gramatical
                                                   end;
                                               TAS[i,j]^.cant:=k+1;        //Incrementa la cantidad de simbolos que contiene la celda de la TAS en memoria
                                               arregloSimbolosAux := nil;  //Limpia la variable auxiliar

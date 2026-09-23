@@ -118,7 +118,7 @@ begin
 
 end;
 
-function StringToSimbolo(celda: string): TipoSimboloGramatical;
+function StringToSimbolo(celda: string): TipoSimboloGramatical; //Devuelve el simbolo gramatical que se encuentra en la celda
 var
      indice: integer;
 begin

@@ -8,7 +8,7 @@ end;
 
 begin
 
-    read("Ingrese cadena base",raiz);
+    read("Ingrese cadena base: ",raiz);
 
     read("Ingrese subcadena a buscar: ",buscada);
 
