@@ -1,6 +1,6 @@
 ================================================================================
           DOCUMENTACION DE REPOSITORIO Y LENGUAJE - PROYECTO INTEGRADOR
-                 Sintaxis y Semantica de los Lenguajes - Ano 2025
+                 Sintaxis y Semantica de los Lenguajes - Año 2025
 ================================================================================
 
 Este documento contiene la documentacion tecnica completa para el lenguaje de 
@@ -24,7 +24,7 @@ INDICE DE SECCIONES:
 1. NOMBRE ELEGIDO PARA EL LENGUAJE
 ================================================================================
 El lenguaje ha sido llamado "Pascal-Lite". Se trata de un 
-lenguaje imperativo simplificado inspirado en Pascal, disenado con tipado fuerte, 
+lenguaje imperativo simplificado inspirado en Pascal, diseñado con tipado fuerte, 
 soporta operaciones aritmeticas con numeros reales y operaciones con cadenas de
 caracteres.
 Como sentencias contiene: estructura de control ciclica y condicional, asignacion, 
@@ -34,7 +34,7 @@ lectura y escritura.
 2. BNF: DEFINICION FORMAL DE LA SINTAXIS
 ================================================================================
 A continuacion se presenta la gramatica independiente del contexto (CFG) original 
-disenada en notacion BNF para especificar la sintaxis del lenguaje:
+diseñada en notacion BNF para especificar la sintaxis del lenguaje:
 
 <Programa> ::= “program” “identificador” “;” <DeclaracionVariables> “begin” <Cuerpo> “end” “.”
 
@@ -140,10 +140,10 @@ Gramatica LL(1) Modificada:
 --------------------------------------------------------------------------------
 Tabla de Analisis Sintactico (TAS):
 --------------------------------------------------------------------------------
-La TAS se almacena externamente en 'Gramatica/TAS.csv'. Contiene la relacion 
-directa entre variables no terminales (filas) y componentes lexicos terminales 
-(columnas) que permite predecir que regla de produccion aplicar en la pila de 
-analisis.
+La TAS se almacena externamente en '../sintaxis-2025/Gramatica/TAS.csv'. Contiene 
+la relacion directa entre variables no terminales (filas) y componentes lexicos 
+terminales (columnas) que permite predecir que regla de produccion aplicar en la 
+pila de analisis. Las celdas del archivo 'TAS.csv' estan separadas por comas.
 
 ================================================================================
 4. COMPONENTES LEXICOS Y AUTOMATAS FINITOS DETERMINISTAS (DFA)
@@ -159,7 +159,7 @@ Los operadores y delimitadores de un solo caracter o de doble caracter (como
 ":=" o "<=") son reconocidos directamente mediante comparaciones de caracteres:
 - Delimitadores: '(', ')', ';', ',', '.'
 - Aritmeticos: '+', '-', '*', '/', '^'
-- Asignacion: ':=' (tOperadorAsignacion)
+- Asignacion: ':=' 
 - Relacionales: '=', '<', '>', '<=', '>=', '<>'
 - Palabras Reservadas (Normalizadas a mayusculas en la tabla de simbolos):
   PROGRAM, BEGIN, END, VAR, REAL, STRING, IF, THEN, ELSE, WHILE, DO, READ, WRITE,
@@ -197,8 +197,8 @@ analizador sintactico. Sus reglas semanticas son:
 2. Declaracion y Ambito de Variables:
    - Se requiere la declaracion previa de todas las variables en la seccion 'var'.
    - Si se detecta una variable no declarada durante el analisis semantico o de 
-     asignacion, el programa arroja el mensaje "VARIABLE NO DECLARADA: [nombre]" 
-     y finaliza de inmediato ejecutando 'halt'.
+     asignacion, el programa devuelve el mensaje "VARIABLE NO DECLARADA: [nombre]" 
+     y finaliza de inmediato ejecutando 'halt' en el apartado del evualador.
    - El estado del programa se guarda en 'tipoEstado' que almacena: el identificador, 
      el tipo de variable (tipoReal o tipoCadena), y su valor correspondiente.
 
@@ -208,33 +208,34 @@ analizador sintactico. Sus reglas semanticas son:
    - El operador '^' calcula la potencia.
    - El operador unario (en <MayorPrecedencia>) '-' niega el valor de una expresion real.
    - Funcion SQRT: Ejecuta la raiz cuadrada. Requiere un argumento real y que este 
-     sea mayor o igual a cero. Si es negativo, el programa arroja un error semantico 
+     sea mayor o igual que cero. Si es negativo, el programa arroja un error semantico 
      ("ERROR. ARGUMENTO NEGATIVO") y finaliza. Si se le pasa una cadena, muestra 
      "ERROR. DEBE INGRESAR UN REAL".
 
 4. Operaciones con Cadenas:
    - Las cadenas literales cargadas por el analizador lexico son procesadas eliminando las 
-     comillas de los extremos "EliminarComillas".
+     comillas de los extremos utilizando la funcion 'EliminarComillas' 
+     (se encuentra en la unit 'evaluador.pas').
    - Operador CONCAT: Concatena dos expresiones de cadena.
    - Funcion LENGTH: Retorna un valor real que representa la cantidad de caracteres.
    - Funcion EXTRACT: Toma tres parametros: cadena a procesar, posicion de inicio 
      (utiliza un numero real, truncado) y longitud a extraer (utiliza un numero real, truncado). 
-     Retorna la subcadena. Realiza comprobacion de tipos y aborta con "ERROR DE PARAMETROS" en caso de desajuste.
+     Retorna la subcadena. Realiza comprobacion de tipos y aborta con "ERROR DE PARAMETROS" en caso de desajustes.
    - Funcion SEARCHSTR: Toma dos cadenas. Busca la posicion de la primera 
      dentro de la segunda usando la funcion 'pos' de Free Pascal. Si no la encuentra, 
-     retorna '-1'.
+     devuelve '-1'.
 
 5. Estructuras de Control y Operadores Logicos:
-   - Las condiciones de 'if' y 'while' se resuelven mediante comparaciones.
+   - Las condiciones de 'IF' y 'WHILE' se resuelven mediante comparaciones.
    - Operadores logicos: 'AND', 'OR' y 'NOT' operan bajo algebra booleana convencional.
      Donde el orden de precedencia es: 'NOT', 'AND' y 'OR' respectivamente.
    - Operadores relacionales: Permiten comparar valores numericos y cadenas 
      de caracteres de forma directa (alfabeticamente para cadenas).
 
 6. Entrada y Salida (E/S):
-   - 'read': Permite cargar valores en variables en tiempo de ejecucion. Puede ir 
-     acompanado de un mensaje, el cual debe ser una constante en cadena.
-   - 'write': Imprime en pantalla expresiones reales y/o de cadena.
+   - 'READ': Permite cargar valores en variables en tiempo de ejecucion. Puede ir 
+     acompañado de un mensaje, el cual debe ser una constante cadena.
+   - 'WRITE': Imprime en pantalla expresiones reales y/o de cadena, utilizando 'writeln' de Free Pascal.
 
 
 ================================================================================
@@ -247,37 +248,32 @@ Que hace el Interprete:
 1. Lee el codigo fuente en formato de texto.
 2. Ejecuta el Analizador Lexico, identificando cada componente lexico e 
    instalando los identificadores nuevos en la Tabla de Símbolos, luego de haber
-   almacenado las palabras reservadas del lenguaje.
+   almacenado previamente las palabras reservadas del lenguaje.
 3. El Analizador Sintactico extrae simbolos gramaticales y utiliza un algoritmo predictivo 
    apoyado por una pila para validar que el programa corresponda a la gramatica LL(1).
 4. Mientras valida, construye un Arbol Sintactico de Derivacion de forma dinamica.
 5. Si no hay errores sintacticos, escribe una representacion jerarquica del arbol 
-   en el archivo especificado por la constante 'rutaArbol' ('arbol.txt').
-6. Si la variable de bandera sintactica es exitosa ('aux = 1'), llama al modulo 
-  'Evaluador', el cual ejecuta el programa de forma interactiva segun las reglas semanticas.
+   en el archivo especificado por la constante 'rutaArbol' (arbol.txt).
+6. Si la variable de bandera sintactica es exitosa (aux = 1), llama al modulo 
+  'evaluador.pas', el cual ejecuta el programa de forma interactiva segun las reglas semanticas.
 
 --------------------------------------------------------------------------------
 Como se usa el interprete:
 --------------------------------------------------------------------------------
-1. Modificar rutas en 'prueba.pas':
-   Abre el archivo 'prueba.pas' y cambia el valor de las siguientes constantes 
-   segun la ruta absoluta de tu sistema:
-   * 'ruta': Ubicacion del archivo del codigo fuente a ejecutar (por ejemplo: 
-     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/cantidadVocales.txt').
-   * 'rutaCSV': Ubicacion del archivo CSV de la TAS (por ejemplo: 
-     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Gramatica/TAS.csv').
-   * 'rutaArbol': Destino de la exportacion del arbol de derivacion (por ejemplo: 
-     '/home/marco/Desktop/SINTAXIS/ProyectoSintaxis2025/Programas fuente/arbol.txt').
+1. Primero hay que compilar el archivo principal, es decir: 'proyectoIntegrador.lpr'.
+   Si estamos en el directorio raiz del proyecto, deberiamos ejecutar: 'fpc proyectoIntegrador.lpr'.
 
-2. Compilacion del Interprete y Ejecucion:
-   Utilizando la terminal o el compilador de Free Pascal (FPC):
-  
-   'instantfpc proyectoIntegrador.lpr'
-   
-   Esto generara el ejecutable `proyectoIntegrador` en el mismo directorio y lo 
-   ejecuta en el mimso momento. El programa comenzara con el analizador lexico y 
-   sintactico. Si es correcto, el programa comenzara su ejecucion interactiva imprimiendo 
-   y solicitando datos en la consola.
+2. Una vez que ya se ha compilado el archivo se generara un ejecutable, el cual podemos correr desde la terminal.
+   Para ejecutar algun programa, el cual debe haber sido escrito y guardado previamente como archivo de texto, debe 
+   ser pasado como parametro de entrada en la terminal. Por ejemplo, si gueremos correr el programa 'cantidadVocales.txt' 
+   debemos ejecutar en la terminal, ya habiendo compilado previamente, la siguiente entrada:
+
+   './proyectoIntegrador Programas\ fuente/cantidadVocales.txt'
+
+3. Cuando se ejecuta esta entrada en la terminal, automaticamente empieza a ejecutarse el programa seleccionado, 
+   solicitando leer valores de variables y/o imprimiendo en la terminal distintos caracteres. 
+   Tambien pueden mostrarse mensajes cortando la ejecucion del programa, en caso de que haya algun tipo de error.
+   Cuando el programa finaliza, quedan impresos los caracteres del programa en la terminal y esta ultima es liberada.
 
 ================================================================================
 7. PROGRAMAS ESCRITOS EN EL LENGUAJE (Entregables 7, 8 y 9)
@@ -414,11 +410,11 @@ begin
 end.
 
 --------------------------------------------------------------------------------
-9. Calculador de Factorial (nFactorial.txt - Adicional del Grupo)
+9. Calculador de Factorial (nFactorial.txt - Enunciado creado por el grupo)
 --------------------------------------------------------------------------------
 Enunciado: Escribir un programa que lea un numero por teclado y calcule su factorial.
 Si el numero es negativo, debe reportar un error. Si es 0 o positivo, realiza 
-el calculo iterativo acumulando los productos mediante un ciclo `while` y 
+el calculo iterativo acumulando los productos mediante un ciclo 'while' y 
 muestra el resultado por consola.
 
 Codigo Fuente:
@@ -474,12 +470,15 @@ El compilador e interprete esta compuesto por los siguientes archivos de codigo:
 
 1. proyectoIntegrador.lpr:
    - Modulo principal del proyecto. Define el bloque principal del programa 
-     que llama a 'programaPrueba()' en la unit 'prueba'.
+     que llama al procedimiento 'CompilerDriver' en la unit 'driver'.
+   - Al momento de ser ejecutado 'CompilerDriver(paramstr(1))', requiere por 
+     consola el ejecutable seguido del archivo a correr.
 
-2. prueba.pas:
-   - Configura las rutas locales del programa fuente, la TAS (.csv) y el archivo 
-     de salida del arbol.
-   - Ejecuta la llamada al Analizador Sintactico e interpreta el arbol resultante.
+2. driver.pas:
+   - Contiene las rutas del archivo csv que almacena la TAS y la ubicacion del arbol de derivacion.
+     Es decir, '../sintaxis-2025/Gramatica/TAS.csv' y '../sintaxis-2025/Programas fuente/arbol.txt'.
+   - Ejecuta la llamada al Analizador Sintactico e interpreta el arbol resultante mediante el uso 
+     del evaluador.
 
 3. analizadorlexico.pas:
    - Implementa 'ObtenerSiguienteComponenteLexico()' que lee caracteres y reconoce 
@@ -487,8 +486,10 @@ El compilador e interprete esta compuesto por los siguientes archivos de codigo:
    - Filtra espacios y comentarios, y maneja las palabras reservadas del sistema.
 
 4. analizadorsintactico.pas:
-   - Implementa 'AnalizadorSintactico()'. Implementa el algoritmo predictivo LL(1) 
+   - Implementa 'AnalizadorSintactico()'. Incluye el algoritmo predictivo LL(1) 
      no recursivo con una pila explicta y construye el arbol jerarquico de derivacion.
+   - Llama a 'ObtenerSiguienteComponenteLexico()', es decir al analizador lexico, a partir
+     de una posicion dada.
 
 5. tablasimbolos.pas:
    - Define el tipo enumerado 'TipoSimboloGramatical' para clasificar terminales y 

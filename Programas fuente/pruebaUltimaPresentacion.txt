@@ -1,0 +1,55 @@
+program pruebaUltimaPresentacion;
+
+var
+    ruta:string;
+    nombreArchivo:string;
+    carpeta:string;
+    extension:string;
+    resto:string;
+    aux:real;
+    i:real;
+    posPunto:real;
+    posSlash:real;
+end;
+
+begin
+
+    read("Ingrese ruta: ",ruta);
+
+    posPunto:=SEARCHSTR(".",ruta);
+
+    if posPunto <> -1 then
+
+        posSlash:=0;
+
+        i:=LENGTH(ruta);
+
+        resto:=ruta;
+
+        while posSlash = 0 do
+
+            resto:=EXTRACT(ruta,i,1);
+
+            if resto = "/" then
+            
+                posSlash:=i;
+
+            end;
+
+            i:=i-1;
+
+        end;
+
+        nombreArchivo:=EXTRACT(ruta,posSlash+1,posPunto-posSlash-1);
+
+        carpeta:=EXTRACT(ruta,1,posSlash);
+
+        extension:=EXTRACT(ruta,posPunto+1,LENGTH(ruta)-posPunto);
+    
+    end;
+
+    write("Carpeta: ",carpeta);
+    write("Nombre de archivo: ",nombreArchivo);
+    write("Extension: ",extension);
+
+end.

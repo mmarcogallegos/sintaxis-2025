@@ -2,9 +2,9 @@ program proyectointegrador;
 
 {$mode ObjFPC}{$H+}
 
-uses prueba;
+uses driver;
 
 
 begin
-     programaPrueba(paramstr(1));
+     CompilerDriver(paramstr(1));
 end.

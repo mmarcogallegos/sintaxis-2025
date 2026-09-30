@@ -1,4 +1,4 @@
-unit prueba;
+unit driver;
 
 {$mode ObjFPC}{$H+}
 
@@ -8,25 +8,17 @@ uses
   analizadorlexico,analizadorsintactico,tablasimbolos,crt,sysutils,TAS,CsvDocument,pila,arbol,evaluador;
 
 const
-ruta = '/home/marco/Desktop/sintaxis-2025/Programas fuente/esPalindromo.txt';
 rutaCSV = '/home/marco/Desktop/sintaxis-2025/Gramatica/TAS.csv';
 rutaArbol = '/home/marco/Desktop/sintaxis-2025/Programas fuente/arbol.txt';
 
 
-procedure programaPrueba(nombreFuente:string);
+procedure CompilerDriver(nombreFuente:string);
 
 implementation
 
-
-procedure programaPrueba(nombreFuente:string);
+procedure CompilerDriver(nombreFuente:string);
 var
-    i:integer;
     fuente:fileOfChar;
-    ComponenteLexico:TipoSimboloGramatical;
-    Lexema:string;
-    control:integer;
-    TablaSimbolos:TablaDeSimbolos;
-    TAS:tablaTas;
     raiz:tipoArbolDerivacion;
     estado:tipoEstado;
     aux:byte;
